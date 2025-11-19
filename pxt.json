@@ -1,0 +1,23 @@
+{
+    "name": "bmduino",
+    "version": "1.0.0",
+    "description": "A Microsoft MakeCode package for BMduino(BestModules)",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "README.md",
+        "main.ts"
+        "test.ts"
+        "_locales/zh-cn/bmduino-strings.json",
+        "_locales/zh-tw/bmduino-strings.json"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "supportedTargets": [
+        "microbit"
+    ],
+    "public": true
+}

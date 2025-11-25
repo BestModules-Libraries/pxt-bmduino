@@ -8,8 +8,8 @@
     },
     "files": [
         "README.md",
-        "main.ts"
-        "test.ts"
+        "main.ts",
+        "test.ts",
         "_locales/zh-cn/bmduino-strings.json",
         "_locales/zh-tw/bmduino-strings.json"
     ],

@@ -1,7 +1,7 @@
 # BMduino
 
-Extension for BMduino(BestModules),micro:bit(v2)only.
-(User Manual of BMB81TM01A)https://www.bestmodulescorp.com/en/amfile/file/download/file/2588/product/1418/
+Extension for BMduino(BestModules),micro:bit(v2)only.  
+https://www.bestmodulescorp.com/en/amfile/file/download/file/2588/product/1418/(User Manual of BMB81TM01A)
 
 
 ## Basic usage

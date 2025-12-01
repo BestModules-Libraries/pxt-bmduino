@@ -1,7 +1,7 @@
 {
     "name": "bmduino",
     "version": "1.0.0",
-    "description": "A Microsoft MakeCode package for BMduino(BestModules)",
+    "description": "Extension for BMduino(BestModules),micro:bit(v2)only.",
     "license": "MIT",
     "dependencies": {
         "core": "*"
@@ -9,7 +9,6 @@
     "files": [
         "README.md",
         "main.ts",
-        "test.ts",
         "_locales/zh-cn/bmduino-strings.json",
         "_locales/zh-tw/bmduino-strings.json"
     ],
@@ -18,6 +17,9 @@
     ],
     "supportedTargets": [
         "microbit"
+    ],
+    "disablesVariants": [
+        "mbdal"
     ],
     "public": true
 }

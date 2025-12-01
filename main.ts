@@ -1,4 +1,4 @@
-enum BMduino_WiFiMode {
+enum BMduinoWiFiMode {
     //% block="STA mode"
     STA = 1,
     //% block="AP mode"
@@ -6,7 +6,7 @@ enum BMduino_WiFiMode {
     //% block="AP+STA mode"
     AP_STA = 3
 }
-enum BMduino_UARTChannel {
+enum BMduinoUARTChannel {
     //% block="UART1"
     UART1 = 1,
     //% block="UART2"
@@ -14,13 +14,13 @@ enum BMduino_UARTChannel {
     //% block="UART3"
     UART3 = 3
 }
-enum BMduino_GasConcentrationRange {
+enum BMduinoGasConcentrationRange {
     //% block="5000ppm"
     Range5000 = 5000,
     //% block="2000ppm"
     Range2000 = 2000
 }
-enum BMduino_PMType {
+enum BMduinoPMType {
     //% block="PM1.0"
     PM1 = 1,
     //% block="PM2.5"
@@ -28,34 +28,34 @@ enum BMduino_PMType {
     //% block="PM10"
     PM3 = 3
 }
-enum BMduino_TDSChannel {
+enum BMduinoTDSChannel {
     //% block="channel 1"
     Channel1 = 1,
     //% block="channel 2"
     Channel2 = 2
 }
-enum BMduino_TemperatureObject {
+enum BMduinoTemperatureObject {
     //% block="body temperature"
     BodyTemperature = 0x0A,
     //% block="object surface temperature"
     ObjectSurfacetemperature = 0x09,
     //% block="ambient temperature"
     AmbientTemperature = 0x08
-    
+
 }
-enum BMduino_SmokeType {
+enum BMduinoSmokeType {
     //% block="white smoke"
     WhiteSmoke = 1,
     //% block="black smoke"
     BlackSmoke = 2
 }
-enum BMduino_TemperatureUnit {
+enum BMduinoTemperatureUnit {
     //% block="fahrenheit"
     Fahrenheit,
     //% block="celsius"
     Celsius
 }
-//% block="bmduino" color=#0fbc11 icon="\uf164"
+//% block="BMduino" color=#0fbc11 icon="\uf164"
 namespace bmduino {
     //----------------------------------------------------------
     // Modules Name    : WIFI模块，WIFI模組，WIFI Module
@@ -63,7 +63,8 @@ namespace bmduino {
     //----------------------------------------------------------
     let isInitialized = false;
 
-    function bmc81m016a_readResponse(): string {
+    //% blockId=bmduino_bw16ReadResponse
+    function bw16ReadResponse(): string {
         let response = "";
         let startTime = input.runningTime();
         let hasData = false;
@@ -92,9 +93,9 @@ namespace bmduino {
     * @param password WIFI password
     * @return void
     */
-    //% blockID=bmc81m016a_connectToWiFi block="WiFi name %ssid Password %password"
+    //% blockId=bmduino_bw16ConnectToWiFi block="WiFi name %ssid Password %password"
     //% weight=100
-    export function bmc81m016a_connectToWiFi(ssid: string, password: string): boolean {
+    export function bw16ConnectToWiFi(ssid: string, password: string): boolean {
         let ret = false;
         if (!isInitialized) {
             let command = "AT\r\n";
@@ -103,40 +104,40 @@ namespace bmduino {
 
             serial.redirect(SerialPin.P1, SerialPin.P0, 115200); // Use P0 and P1 as UART
 
-            // bmduino.BMD31M090_writeStringNewLine("Open your HOTSPOT!");
+            // bmduino.writeStringNewLineOLED("Open your HOTSPOT!");
 
             let response = "";
             serial.writeString(command);
             basic.pause(100);
-            response = bmc81m016a_readResponse();
+            response = bw16ReadResponse();
             if (response.includes("OK")) {
                 let response1 = "";
                 serial.writeString(command1);
                 basic.pause(500);
-                response1 = bmc81m016a_readResponse();
+                response1 = bw16ReadResponse();
                 if (response1.includes("OK")) {
                     let response2 = "";
 
                     while (true) {
                         serial.writeString(command2);
                         basic.pause(500);
-                        response2 = bmc81m016a_readResponse();
+                        response2 = bw16ReadResponse();
 
                         if (response2.includes("OK")) {
-                            // bmduino.BMD31M090_clearDisplay()
-                            // bmduino.BMD31M090_writeStringNewLine("WiFi Connected!")
-                            // bmduino.BMD31M090_writeStringNewLine("SSID: " + ssid)
+                            // bmduino.clearDisplayOLED()
+                            // bmduino.writeStringNewLineOLED("WiFi Connected!")
+                            // bmduino.writeStringNewLineOLED("SSID: " + ssid)
                             basic.pause(500)
                             isInitialized = true
                             ret = true;
                             break;
                         } else {
-                            // bmduino.BMD31M090_clearDisplay()
-                            // bmduino.BMD31M090_writeStringNewLine("Connecting WiFi...")
+                            // bmduino.clearDisplayOLED()
+                            // bmduino.writeStringNewLineOLED("Connecting WiFi...")
                         }
                     }
                 } else {
-                    // bmduino.BMD31M090_writeStringNewLine("WiFi Mode Set ERROR");
+                    // bmduino.writeStringNewLineOLED("WiFi Mode Set ERROR");
                 }
             }
         } else {
@@ -153,14 +154,14 @@ namespace bmduino {
     * @param name ThinkSpeak name
     * @param password ThinkSpeak Password
     */
-    //% blockID=bmc81m016a_sendMQTT block="ThingSpeak |  Client ID %client| Username %name| Password %password|"
+    //% blockId=bmduino_bw16SendMQTT block="thingSpeak |  Client ID %client| Username %name| Password %password|"
     //% weight=90
-    export function bmc81m016a_sendMQTT(client: string, name: string, password: string): boolean {
+    export function bw16SendMQTT(client: string, name: string, password: string): boolean {
         let ret = false;
         if (isInitialized) {
 
-            // bmduino.BMD31M090_clearDisplay()
-            // bmduino.BMD31M090_writeStringNewLine("Waiting for upload...");
+            // bmduino.clearDisplayOLED()
+            // bmduino.writeStringNewLineOLED("Waiting for upload...");
 
             let command1 = `AT+MQTT=1,"mqtt3.thingspeak.com"\r\n`;
             let command2 = `AT+MQTT=2,"1883"\r\n`;
@@ -175,7 +176,7 @@ namespace bmduino {
             let response = ""
             serial.writeString(command1);
             basic.pause(100);
-            response = bmc81m016a_readResponse(); // Read response
+            response = bw16ReadResponse(); // Read response
             // if (response.includes("OK")) {
             //     ret = true;
             // }
@@ -184,39 +185,39 @@ namespace bmduino {
             let response1 = ""
             serial.writeString(command2);
             basic.pause(500);
-            response1 = bmc81m016a_readResponse();
+            response1 = bw16ReadResponse();
             // if(response1.includes("OK"))
             // {
             //     ret=true;
             // }
-            //bmduino.BMD31M090_clearDisplay();
+            //bmduino.clearDisplayOLED();
 
             serial.writeString(command3);
             basic.pause(500);
-            //bmduino.BMD31M090_clearDisplay();
+            //bmduino.clearDisplayOLED();
 
             serial.writeString(command4);
             basic.pause(500);
-            // bmduino.BMD31M090_clearDisplay();
+            // bmduino.clearDisplayOLED();
 
             serial.writeString(command5);
             basic.pause(500);
-            //bmduino.BMD31M090_clearDisplay();
+            //bmduino.clearDisplayOLED();
 
             serial.writeString(command6);
             basic.pause(500);
-            //bmduino.BMD31M090_clearDisplay();
+            //bmduino.clearDisplayOLED();
 
             serial.writeString(command7);
             basic.pause(500);
-            //bmduino.BMD31M090_clearDisplay();
+            //bmduino.clearDisplayOLED();
 
             serial.writeString(command8);
             basic.pause(500);
-            //bmduino.BMD31M090_clearDisplay();
+            //bmduino.clearDisplayOLED();
 
         } else {
-            //bmduino.BMD31M090_writeStringNewLine("ERROR: Module not initialized!");
+            //bmduino.writeStringNewLineOLED("ERROR: Module not initialized!");
         }
         return true;
     }
@@ -229,10 +230,10 @@ namespace bmduino {
     * @param data Data1~data7 : field1~field8 data
     */
     //% expandableArgumentMode="enabled"
-    //% blockID=bmc81m016a_PUBLISHTOPIC block="PUBLISHTOPIC send data | Channel ID %topic| field1_data %data||field2_data %data1| field3_data %data2| field4_data %data3| field5_data %data4| field6_data %data5| field7_data %data6| field8_data %data7"
+    //% blockId=bmduino_bw16PublishTopic block="send data | Channel ID %topic| field1_data %data||field2_data %data1| field3_data %data2| field4_data %data3| field5_data %data4| field6_data %data5| field7_data %data6| field8_data %data7"
     //% topic.defl=0 data.defl=0 data1.defl=0 data2.defl=0 data3.defl=0 data4.defl=0 data5.defl=0 data6.defl=0 data.defl=0
     //% weight=80
-    export function bmc81m016a_PUBLISHTOPIC(topic: number = 0, data: number = 0, data1: number = 0, data2: number = 0, data3: number = 0, data4: number = 0, data5: number = 0, data6: number = 0, data7: number = 0): void {
+    export function bw16PublishTopic(topic: number = 0, data: number = 0, data1: number = 0, data2: number = 0, data3: number = 0, data4: number = 0, data5: number = 0, data6: number = 0, data7: number = 0): void {
         let response = "";
         let topic1 = "channels" + "/" + topic + "/" + "publish";
         let data_buf1 = "field1=" + data;
@@ -288,7 +289,7 @@ namespace bmduino {
             while (retryCount <= 2 && !success) {
                 serial.writeString(currentCommand);
                 basic.pause(500);
-                response = bmc81m016a_readResponse();
+                response = bw16ReadResponse();
 
                 if (response.includes("ERROR")) {
                     retryCount++;
@@ -303,22 +304,6 @@ namespace bmduino {
         }
 
     }
-
-    //% block="SUBSCRIBE | Channel ID = %host|"
-    /*export function bmc81m016a_SUBSCRIBE(topic: number = 0): void {
-        if (isInitialized) {
-            // Splicing AT commands
-            let topic1 = "channels" + "/" + topic + "/" + "subscribe" + "/" + "fields" + "/" + "field1";
-            let command = "AT+MQTTSUB=" + topic1 + ",1" + "\r\n";
-            serial.writeString(command);
-            basic.pause(1000);
-            let response = ""
-            response = bmc81m016a_readResponse(); // Read response
-            bmduino.writeStringNewLine(response);
-        } else {
-            basic.showString("ERROR"); // Display error
-        }
-    }*/
 
     //----------------------------------------------------------
     // Modules Name    : 血氧模块，血氧模組，Oximeter Module
@@ -337,17 +322,17 @@ namespace bmduino {
      * Initialize module (oximeter module)
      * @param uart UART interface selection
      */
-    //% blockId=bmh08101_initialize_d block="Initialize oximeter module,channel %uart"
-    //% subcategory="oximeter module"
+    //% blockId=bmduino_initOximeterModule block="initialize oximeter module,channel %uart"
+    //% subcategory="Oximeter module"
     //% weight=100
-    export function bmh08101_initialize_d(uart: BMduino_UARTChannel): void {
-        if (uart == BMduino_UARTChannel.UART1) {
+    export function initOximeterModule(uart: BMduinoUARTChannel): void {
+        if (uart == BMduinoUARTChannel.UART1) {
             bmh08101_rxPin = SerialPin.P1
             bmh08101_txPin = SerialPin.P0
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bmh08101_rxPin = SerialPin.P13
             bmh08101_txPin = SerialPin.P12
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bmh08101_rxPin = SerialPin.P16
             bmh08101_txPin = SerialPin.P15
         }
@@ -380,10 +365,10 @@ namespace bmduino {
     /**
      * Start measure
      */
-    //% blockId=bmh08101_beginMeasure block="Begin measure oximeter"
-    //% subcategory="oximeter module"
+    //% blockId=bmduino_beginMeasureOximeter block="begin measure oximeter"
+    //% subcategory="Oximeter module"
     //% weight=90
-    export function bmh08101_beginMeasure(): void {
+    export function beginMeasureOximeter(): void {
         if (!bmh08101_initialized) return
         serial.redirect(bmh08101_txPin, bmh08101_rxPin, BaudRate.BaudRate38400)
         basic.pause(5)
@@ -403,10 +388,10 @@ namespace bmduino {
      * Check the oxygen measurement status
      * @return oxygen Measurement status.0x00: sensor error;0x01: no finger detected;0x02: finger detected, measurement incomplete;0x03: finger detected, measurement completed
      */
-    //% blockId=bmh08101_requestInfo block="Check the oximeter measurement status"
-    //% subcategory="oximeter module"
+    //% blockId=bmduino_requestInfoFromOximeter block="check the oximeter measurement status"
+    //% subcategory="Oximeter module"
     //% weight=85
-    export function bmh08101_requestInfo(): number {
+    export function requestInfoFromOximeter(): number {
         serial.redirect(bmh08101_txPin, bmh08101_rxPin, BaudRate.BaudRate38400)
         basic.pause(5)
         serial.readBuffer(0) //clear buff
@@ -450,10 +435,10 @@ namespace bmduino {
      * Read SpO2 value
      * @return SpO2 value(35~99%,uint:%).
      */
-    //% blockId=bmh08101_getSpO2 block="Read SpO2"
-    //% subcategory="oximeter module"
+    //% blockId=bmduino_readSpO2 block="read SpO2"
+    //% subcategory="Oximeter module"
     //% weight=84
-    export function bmh08101_getSpO2(): number {
+    export function readSpO2(): number {
         return bmh08101_dataBuffer[0]
     }
 
@@ -461,10 +446,10 @@ namespace bmduino {
      * Read heartrate value
      * @return heartrate value(30~250,uint:BPM).
      */
-    //% blockId=bmh08101_getHeartRate block="Read heartrate"
-    //% subcategory="oximeter module"
+    //% blockId=bmduino_readHeartRate block="read heartrate"
+    //% subcategory="Oximeter module"
     //% weight=82
-    export function bmh08101_getHeartRate(): number {
+    export function readHeartRate(): number {
         return bmh08101_dataBuffer[1]
     }
 
@@ -472,10 +457,10 @@ namespace bmduino {
      * Read blood perfusion index value
      * @return blood perfusion index value(0~200,1 represents 0.1%).
      */
-    //% blockId=bmh08101_getPI block="Read blood perfusion index"
-    //% subcategory="oximeter module"
+    //% blockId=bmduino_readPI block="read blood perfusion index"
+    //% subcategory="Oximeter module"
     //% weight=80
-    export function bmh08101_getPI(): number {
+    export function readPI(): number {
         return Math.round(bmh08101_dataBuffer[2]) / 10  // PI/10 %
     }
 
@@ -488,9 +473,9 @@ namespace bmduino {
     /**
      * Initialize module (IR thermometry module)
      */
-    //% blockId=bmh06203_begin block="Initialize IR thermometry module"
+    //% blockId=bmduino_initIRThermometryModule block="initialize IR thermometry module"
     //% subcategory="IR thermometry module" weight=255
-    export function bmh06203_begin(): void {
+    export function initIRThermometryModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
     }
 
@@ -499,18 +484,18 @@ namespace bmduino {
      * @param obj Temperature type selection
      * @return Temperature.
      */
-    //% blockId=bmh06203_readTemperature block="Read IR thermometry temperature%obj"
+    //% blockId=bmduino_readTemperatureFromIRThermometry block="read IR thermometry temperature%obj"
     //% subcategory="IR thermometry module" weight=90
-    export function bmh06203_readTemperature(obj: BMduino_TemperatureObject): number {
+    export function readTemperatureFromIRThermometry(obj: BMduinoTemperatureObject): number {
         let configBuffer = pins.createBuffer(1);
         let temp_dataBuffer: number[] = [];//Store received data
         let obj_temp = 0x0A;
 
-        if (obj == BMduino_TemperatureObject.BodyTemperature) {
+        if (obj == BMduinoTemperatureObject.BodyTemperature) {
             obj_temp = 0x0A;
-        } else if (obj == BMduino_TemperatureObject.AmbientTemperature) {
+        } else if (obj == BMduinoTemperatureObject.AmbientTemperature) {
             obj_temp = 0x08;
-        } else if (obj == BMduino_TemperatureObject.ObjectSurfacetemperature) {
+        } else if (obj == BMduinoTemperatureObject.ObjectSurfacetemperature) {
             obj_temp = 0x09;
         }
 
@@ -543,27 +528,27 @@ namespace bmduino {
     let bm25S4021_1_rxPin: SerialPin;  //rxPin
     let bm25S4021_1_txPin: SerialPin;  //txPin
     let bm25S4021_1_moduleID = 1;      //ID
-    let bm25S4021_1_rXBuff: number[] = []; 
+    let bm25S4021_1_rXBuff: number[] = [];
 
     /**
      * Initialize module(TDS module)
      * @param uart UART interface selection
      * @param id Module identification code
      */
-    //% blockId=bm25S4021_1_begin block="Initialize TDS module,channel %uart"
+    //% blockId=bmduino_initTDSModule block="initialize TDS module,channel %uart"
     //% subcategory="TDS module" 
     //% weight=3
-    export function bm25S4021_1_begin(uart: BMduino_UARTChannel): void {
+    export function initTDSModule(uart: BMduinoUARTChannel): void {
         bm25S4021_1_moduleID = 1;
 
         // Set the corresponding RX and TX pins based on the selected UART channel
-        if (uart == BMduino_UARTChannel.UART1) {
+        if (uart == BMduinoUARTChannel.UART1) {
             bm25S4021_1_rxPin = SerialPin.P1; // UART1 RX
             bm25S4021_1_txPin = SerialPin.P0; // UART1 TX
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bm25S4021_1_rxPin = SerialPin.P13; // UART2 RX
             bm25S4021_1_txPin = SerialPin.P12; // UART2 TX
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bm25S4021_1_rxPin = SerialPin.P16; // UART3 RX
             bm25S4021_1_txPin = SerialPin.P15; // UART3 TX
         }
@@ -578,18 +563,18 @@ namespace bmduino {
      * @param channel Channels of TDS/NTC to be get
      * @return Water quality concentration.
      */
-    //% blockId=bm25S4021_1_readTDS block="Read %channel TDS value"
+    //% blockId=bmduino_readTDS block="read %channel TDS value"
     //% subcategory="TDS module" 
     //% weight=2
-    export function bm25S4021_1_readTDS(channel: BMduino_TDSChannel): number {
+    export function readTDS(channel: BMduinoTDSChannel): number {
         let TDS = 0;
         let sendBuf: number[] = [0x42, 0x4D, 0x61, bm25S4021_1_moduleID, 0x01, 0x01, 0x00, 0x00]
         sendBuf[6] = channel;
         sendBuf[7] = ~(sendBuf[0] + sendBuf[1] + sendBuf[2] + sendBuf[3] + sendBuf[4] + sendBuf[5] + sendBuf[6]) + 1;
         sendBuf[7] = sendBuf[7] & 0xFF;
-        bm25S4021_1_writeBytes(sendBuf);
+        writeBytesForTDS(sendBuf);
         basic.pause(30);
-        if (bm25S4021_1_readBytes(12, 30) == 0) {
+        if (readBytesForTDS(12, 30) == 0) {
             TDS = ((bm25S4021_1_rXBuff[7] << 8) | bm25S4021_1_rXBuff[8]) / 10;
         }
         basic.pause(10);
@@ -601,25 +586,26 @@ namespace bmduino {
      * @param channel Channels of TDS/NTC to be get
      * @return Water temperature.
      */
-    //% blockId=bm25S4021_1_Temperature block="Read %channel temperature value"
+    //% blockId=bmduino_readTemperatureFromTDS block="read %channel temperature value"
     //% subcategory="TDS module" 
     //% weight=1
-    export function bm25S4021_1_Temperature(channel: BMduino_TDSChannel): number {
+    export function readTemperatureFromTDS(channel: BMduinoTDSChannel): number {
         let Temperature = 0;
         let sendBuf: number[] = [0x42, 0x4D, 0x61, bm25S4021_1_moduleID, 0x01, 0x01, 0x00, 0x00]
         sendBuf[6] = channel;
         sendBuf[7] = ~(sendBuf[0] + sendBuf[1] + sendBuf[2] + sendBuf[3] + sendBuf[4] + sendBuf[5] + sendBuf[6]) + 1;
         sendBuf[7] = sendBuf[7] & 0xFF;
-        bm25S4021_1_writeBytes(sendBuf);
+        writeBytesForTDS(sendBuf);
         basic.pause(30);
-        if (bm25S4021_1_readBytes(12, 30) == 0) {
+        if (readBytesForTDS(12, 30) == 0) {
             Temperature = ((bm25S4021_1_rXBuff[9] << 8) | bm25S4021_1_rXBuff[10]) / 10;
         }
         basic.pause(10);
         return Temperature;
     }
-
-    function bm25S4021_1_writeBytes(writeBuff: number[]): void {
+     
+    //% blockId=bmduino_writeBytesForTDS
+    function writeBytesForTDS(writeBuff: number[]): void {
         serial.redirect(bm25S4021_1_txPin, bm25S4021_1_rxPin, BaudRate.BaudRate9600);
         basic.pause(5);
         let sendBuff = pins.createBuffer(writeBuff.length);
@@ -630,7 +616,8 @@ namespace bmduino {
         serial.writeBuffer(sendBuff);
     }
 
-    function bm25S4021_1_readBytes(length: number, timeOut: number): number {
+    //% blockId=bmduino_readBytesForTDS
+    function readBytesForTDS(length: number, timeOut: number): number {
         let checkSum = 0;
         let lastreadLength = 0;  //Last received byte count
         let readLength = 0;  //Received byte count
@@ -671,26 +658,26 @@ namespace bmduino {
     let bm25S2621_1_rxPin: SerialPin;  //rxPin
     let bm25S2621_1_txPin: SerialPin;  //txPin
     let bm25S2621_1_staPin: DigitalPin;  //staPin
-    let bm25S2621_1_rXBuff: number[] = []; 
+    let bm25S2621_1_rXBuff: number[] = [];
 
     /**
      * Initialize module(soil module)
      * @param uart UART interface selection
      */
-    //% blockId=bm25S2621_1_begin block="Initialize Soil module,channel %uart"
-    //% subcategory="soil module"
+    //% blockId=bmduino_initSoilModule block="initialize Soil module,channel %uart"
+    //% subcategory="Soil module"
     //% weight=5
-    export function bm25S2621_1_begin(uart: BMduino_UARTChannel): void {
+    export function initSoilModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
-        if (uart == BMduino_UARTChannel.UART1) {
+        if (uart == BMduinoUARTChannel.UART1) {
             bm25S2621_1_rxPin = SerialPin.P1; // UART1 RX
             bm25S2621_1_txPin = SerialPin.P0; // UART1 TX
             bm25S2621_1_staPin = DigitalPin.P2; // UART1 STA
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bm25S2621_1_rxPin = SerialPin.P13; // UART2 RX
             bm25S2621_1_txPin = SerialPin.P12; // UART2 TX
             bm25S2621_1_staPin = DigitalPin.P8; // UART8 STA
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bm25S2621_1_rxPin = SerialPin.P16; // UART3 RX
             bm25S2621_1_txPin = SerialPin.P15; // UART3 TX
             bm25S2621_1_staPin = DigitalPin.P14; // UART3 STA
@@ -706,18 +693,18 @@ namespace bmduino {
      * @param id Current ID of module
      * @return Module's moisture measurement value.
      */
-    //% blockId=bm25S2621_1_readMoisture block="Read soil moisture(ID = %id)"
+    //% blockId=bmduino_readMoistureFromSoil block="read soil moisture(ID = %id)"
     //% id.min=1 id.max=254 id.defl=1
-    //% subcategory="soil module" 
+    //% subcategory="Soil module" 
     //% weight=4
-    export function bm25S2621_1_readMoisture(id: number = 1): number {
+    export function readMoistureFromSoil(id: number = 1): number {
         let Moisture = 0;
         let sendBuf: number[] = [0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00];
         sendBuf[0] = id;
-        sendBuf[6] = bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) & 0xff;
-        sendBuf[7] = (bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) >> 8) & 0xff;
-        bm25S2621_1_writeBytes(sendBuf);
-        if (bm25S2621_1_readBytes(9, 30) == 0) {
+        sendBuf[6] = modbusCRCForSoil(sendBuf.slice(0, 6)) & 0xff;
+        sendBuf[7] = (modbusCRCForSoil(sendBuf.slice(0, 6)) >> 8) & 0xff;
+        writeBytesForSoil(sendBuf);
+        if (readBytesForSoil(9, 30) == 0) {
             Moisture = ((bm25S2621_1_rXBuff[3] << 8) | bm25S2621_1_rXBuff[4]);
         }
         basic.pause(5);
@@ -729,18 +716,18 @@ namespace bmduino {
      * @param id Current ID of module
      * @return Module's temperature measurement value
      */
-    //% blockId=bm25S2621_1_readTemperature block="Read temperature(ID = %id)"
+    //% blockId=bmduino_readTemperatureFromSoil block="read temperature(ID = %id)"
     //% id.min=1 id.max=254 id.defl=1
-    //% subcategory="soil module"
+    //% subcategory="Soil module"
     //% weight=3
-    export function bm25S2621_1_readTemperature(id: number = 1): number {
+    export function readTemperatureFromSoil(id: number = 1): number {
         let Temperature = 0;
         let sendBuf: number[] = [0x00, 0x03, 0x00, 0x01, 0x00, 0x02, 0x00, 0x00];
         sendBuf[0] = id;
-        sendBuf[6] = bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) & 0xff;
-        sendBuf[7] = (bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) >> 8) & 0xff;
-        bm25S2621_1_writeBytes(sendBuf);
-        if (bm25S2621_1_readBytes(9, 30) == 0) {
+        sendBuf[6] = modbusCRCForSoil(sendBuf.slice(0, 6)) & 0xff;
+        sendBuf[7] = (modbusCRCForSoil(sendBuf.slice(0, 6)) >> 8) & 0xff;
+        writeBytesForSoil(sendBuf);
+        if (readBytesForSoil(9, 30) == 0) {
             Temperature = ((bm25S2621_1_rXBuff[5] << 8) | bm25S2621_1_rXBuff[6]);
         }
         basic.pause(5);
@@ -752,16 +739,16 @@ namespace bmduino {
      * Get module's ID
      * @return Module's ID.1~254: module's ID;0: communication failure
      */
-    //% blockId=bm25S2621_1_getID block="Read the ID of the soil module"
-    //% subcategory="soil module" 
+    //% blockId=bmduino_readIDFromSoil block="read the ID of the soil module"
+    //% subcategory="Soil module" 
     //% weight=2
-    export function bm25S2621_1_getID(): number {
+    export function readIDFromSoil(): number {
         let number = 0;
         let sendBuf: number[] = [0xFF, 0x03, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00];
-        sendBuf[6] = bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) & 0xff;
-        sendBuf[7] = (bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) >> 8) & 0xff;
-        bm25S2621_1_writeBytes(sendBuf);
-        if (bm25S2621_1_readBytes(7, 30) == 0) {
+        sendBuf[6] = modbusCRCForSoil(sendBuf.slice(0, 6)) & 0xff;
+        sendBuf[7] = (modbusCRCForSoil(sendBuf.slice(0, 6)) >> 8) & 0xff;
+        writeBytesForSoil(sendBuf);
+        if (readBytesForSoil(7, 30) == 0) {
             number = ((bm25S2621_1_rXBuff[3] << 8) | bm25S2621_1_rXBuff[4]);
         }
         basic.pause(5);
@@ -773,26 +760,27 @@ namespace bmduino {
      * @param currentID Current ID of module
      * @param newID New ID of module
      */
-    //% blockId=bm25S2621_1_setID block="Set the ID of the soil module (Current ID = %oldid|,Target ID = %newid)"
+    //% blockId=bmduino_setIDForSoil block="set the ID of the soil module (Current ID = %oldid|,Target ID = %newid)"
     //% oldid.min=1 oldid.max=254 oldid.defl=1
     //% newid.min=1 newid.max=254 newid.defl=1
-    //% subcategory="soil module"
+    //% subcategory="Soil module"
     //% weight=1
-    export function bm25S2621_1_setID(oldid: number = 1, newid: number = 1): void {
+    export function setIDForSoil(oldid: number = 1, newid: number = 1): void {
         let sendBuf: number[] = [0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
         sendBuf[0] = oldid;
         sendBuf[5] = newid;
-        sendBuf[6] = bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) & 0xff;
-        sendBuf[7] = (bm25S2621_1_modbusCRC(sendBuf.slice(0, 6)) >> 8) & 0xff;
-        bm25S2621_1_writeBytes(sendBuf);
-        if (bm25S2621_1_readBytes(8, 30) == 0) {
+        sendBuf[6] = modbusCRCForSoil(sendBuf.slice(0, 6)) & 0xff;
+        sendBuf[7] = (modbusCRCForSoil(sendBuf.slice(0, 6)) >> 8) & 0xff;
+        writeBytesForSoil(sendBuf);
+        if (readBytesForSoil(8, 30) == 0) {
             basic.pause(5);
         }
         basic.pause(5);
     }
 
     //CRC verification
-    function bm25S2621_1_modbusCRC(buf: number[]): number {
+    //% blockId=bmduino_modbusCRCForSoil
+    function modbusCRCForSoil(buf: number[]): number {
         let crc = 0xFFFF
         for (let pos = 0; pos < buf.length; pos++) {
             crc ^= buf[pos]
@@ -806,7 +794,8 @@ namespace bmduino {
         return crc
     }
 
-    function bm25S2621_1_writeBytes(writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesForSoil
+    function writeBytesForSoil(writeBuff: number[]): void {
         serial.redirect(bm25S2621_1_txPin, bm25S2621_1_rxPin, BaudRate.BaudRate9600);  // redirect uart
         basic.pause(5);
         let sendBuff = pins.createBuffer(writeBuff.length);
@@ -821,7 +810,8 @@ namespace bmduino {
         pins.digitalWritePin(bm25S2621_1_staPin, 0); // STA pin control is currently reading
     }
 
-    function bm25S2621_1_readBytes(length: number, timeOut: number): number {
+    //% blockId=bmduino_readBytesForSoil
+    function readBytesForSoil(length: number, timeOut: number): number {
         let checkSumlow = 0;
         let checkSumhigh = 0;
         let lastreadLength = 0;  //Last received byte count
@@ -843,8 +833,8 @@ namespace bmduino {
         }
 
         /**Data verification**/
-        checkSumlow = bm25S2621_1_modbusCRC(bm25S2621_1_rXBuff.slice(0, (length - 2))) & 0xff;
-        checkSumhigh = (bm25S2621_1_modbusCRC(bm25S2621_1_rXBuff.slice(0, (length - 2))) >> 8) & 0xff;
+        checkSumlow = modbusCRCForSoil(bm25S2621_1_rXBuff.slice(0, (length - 2))) & 0xff;
+        checkSumhigh = (modbusCRCForSoil(bm25S2621_1_rXBuff.slice(0, (length - 2))) >> 8) & 0xff;
         if (checkSumlow == bm25S2621_1_rXBuff[length - 2] && checkSumhigh == bm25S2621_1_rXBuff[length - 1]) {
             return 0; // Verification successful
         }
@@ -861,24 +851,24 @@ namespace bmduino {
     //----------------------------------------------------------
     let bm25S3221_1_rxPin: SerialPin;  //rxPin
     let bm25S3221_1_txPin: SerialPin;  //txPin
-    let bm25S3221_1_rXBuff: number[] = []; 
+    let bm25S3221_1_rXBuff: number[] = [];
 
     /**
      * Initialize module(laser dust detection module)
      * @param uart UART interface selection
      */
-    //% blockId=bm25S3221_1_begin block="Initialize laser dust detection module,channel %uart"
-    //% subcategory="laser dust detection module"
+    //% blockId=bmduino_initLaserDustModule block="initialize laser dust detection module,channel %uart"
+    //% subcategory="Laser dust detection module"
     //% weight=30
-    export function bm25S3221_1_begin(uart: BMduino_UARTChannel): void {
+    export function initLaserDustModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
-        if (uart == BMduino_UARTChannel.UART1) {
+        if (uart == BMduinoUARTChannel.UART1) {
             bm25S3221_1_rxPin = SerialPin.P1; // UART1 RX
             bm25S3221_1_txPin = SerialPin.P0; // UART1 TX
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bm25S3221_1_rxPin = SerialPin.P13; // UART2 RX
             bm25S3221_1_txPin = SerialPin.P12; // UART2 TX
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bm25S3221_1_rxPin = SerialPin.P16; // UART3 RX
             bm25S3221_1_txPin = SerialPin.P15; // UART3 TX
         }
@@ -886,17 +876,17 @@ namespace bmduino {
         serial.redirect(bm25S3221_1_txPin, bm25S3221_1_rxPin, BaudRate.BaudRate9600);  // redirect uart
         serial.setRxBufferSize(255); // Set rxBuffer size to 255
         serial.setTxBufferSize(255); // Set txBuffer size to 255
-        bm25S3221_1_setUploadMode(); //set "Command query mode"
+        setUploadModeForLaserDust(); //set "Command query mode"
     }
 
     /**
      * Preheating completed?
      * @return status.ture:complete;false:incomple
      */
-    //% blockId=bm25S3221_1_preheatCountdown block="Laser dust detection module preheating completed"
-    //% subcategory="laser dust detection module"
+    //% blockId=bmduino_preheatingCompletedOfLaserDust block="laser dust detection module preheating completed"
+    //% subcategory="Laser dust detection module"
     //% weight=20
-    export function bm25S3221_1_preheatCountdown(): boolean {
+    export function preheatingCompletedOfLaserDust(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
         {
             return false;
@@ -908,10 +898,10 @@ namespace bmduino {
      * Preheating not completed?
      * @return status.ture:incomple;false:complete
      */
-    //% blockId=bm25S3221_1_preheatCountdown2 block="Laser dust detection module preheating not completed"
-    //% subcategory="laser dust detection module"
+    //% blockId=bmduino_preheatingNotCompletedOfLaserDust block="laser dust detection module preheating not completed"
+    //% subcategory="Laser dust detection module"
     //% weight=19
-    export function bm25S3221_1_preheatCountdown2(): boolean {
+    export function preheatingNotCompletedOfLaserDust(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
         {
             return true;
@@ -924,14 +914,14 @@ namespace bmduino {
      * @param pm PM1/PM2.5/PM10
      * @return pm value.
      */
-    //% blockId=bm25S3221_1_readPM block="Read %pm value"
-    //% subcategory="laser dust detection module"
+    //% blockId=bmduino_readPM block="read %pm value"
+    //% subcategory="Laser dust detection module"
     //% weight=10
-    export function bm25S3221_1_readPM(pm: BMduino_PMType): number {
+    export function readPM(pm: BMduinoPMType): number {
         let PM = 0;
         let sendBuf: number[] = [0xff, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79]
-        bm25S3221_1_writeBytes(sendBuf);
-        if (bm25S3221_1_readBytes(9, 10) == 0) {
+        writeBytesForLaserDust(sendBuf);
+        if (readBytesForLaserDust(9, 10) == 0) {
             if (pm == 1) {
                 PM = ((bm25S3221_1_rXBuff[2] << 8) | bm25S3221_1_rXBuff[3]);
             }
@@ -947,12 +937,14 @@ namespace bmduino {
     }
 
     // set "Command query mode"
-    function bm25S3221_1_setUploadMode(): void {
+    //% blockId=bmduino_setUploadModeForLaserDust
+    function setUploadModeForLaserDust(): void {
         let sendBuf: number[] = [0xff, 0x01, 0x78, 0x41, 0x00, 0x00, 0x00, 0x00, 0x46]
-        bm25S3221_1_writeBytes(sendBuf);
+        writeBytesForLaserDust(sendBuf);
     }
 
-    function bm25S3221_1_writeBytes(writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesForLaserDust
+    function writeBytesForLaserDust(writeBuff: number[]): void {
         serial.redirect(bm25S3221_1_txPin, bm25S3221_1_rxPin, BaudRate.BaudRate9600); // redirect uart
         basic.pause(5);
         let sendBuff = pins.createBuffer(writeBuff.length);
@@ -963,7 +955,8 @@ namespace bmduino {
         serial.writeBuffer(sendBuff);
     }
 
-    function bm25S3221_1_readBytes(length: number, timeOut: number): number {
+    //% blockId=bmduino_readBytesForLaserDust
+    function readBytesForLaserDust(length: number, timeOut: number): number {
         let checkSum = 0;
         let lastreadLength = 0;  //Last received byte count
         let readLength = 0;  //Received byte count
@@ -1003,24 +996,24 @@ namespace bmduino {
     //----------------------------------------------------------
     let bm25S3321_1_rxPin: SerialPin;  //rxPin
     let bm25S3321_1_txPin: SerialPin;  //txPin
-    let bm25S3321_1_rXBuff: number[] = []; 
+    let bm25S3321_1_rXBuff: number[] = [];
 
     /**
      * Initialize module(CO2 module)
      * @param uart UART interface selection
      */
-    //% blockId=bm25S3321_1_begin block="Initialize CO2 module,channel %uart"
+    //% blockId=bmduino_initCO2Module block="initialize CO2 module,channel %uart"
     //% subcategory="CO2 module"
     //% weight=30
-    export function bm25S3321_1_begin(uart: BMduino_UARTChannel): void {
+    export function initCO2Module(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
-        if (uart == BMduino_UARTChannel.UART1) {
+        if (uart == BMduinoUARTChannel.UART1) {
             bm25S3321_1_rxPin = SerialPin.P1; // UART1 RX
             bm25S3321_1_txPin = SerialPin.P0; // UART1 TX
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bm25S3321_1_rxPin = SerialPin.P13; // UART2 RX
             bm25S3321_1_txPin = SerialPin.P12; // UART2 TX
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bm25S3321_1_rxPin = SerialPin.P16; // UART3 RX
             bm25S3321_1_txPin = SerialPin.P15; // UART3 TX
         }
@@ -1035,10 +1028,10 @@ namespace bmduino {
      * Preheating completed?
      * @return status.ture:complete;false:incomple
      */
-    //% blockId=bm25S3321_1_preheatCountdown block="CO2 module preheating completed"
+    //% blockId=bmduino_preheatingCompletedOfCO2 block="CO2 module preheating completed"
     //% subcategory="CO2 module"
     //% weight=20
-    export function bm25S3321_1_preheatCountdown(): boolean {
+    export function preheatingCompletedOfCO2(): boolean {
         if (input.runningTime() < 80000)   //Does the running time exceed 80 seconds
         {
             return false;
@@ -1050,10 +1043,10 @@ namespace bmduino {
     * Preheating not completed?
     * @return status.ture:incomple;false:complete
     */
-    //% blockId=bm25S3321_1_preheatCountdown2 block="CO2 module preheating not completed"
+    //% blockId=bmduino_preheatingNotCompletedOfCO2 block="CO2 module preheating not completed"
     //% subcategory="CO2 module"
     //% weight=19
-    export function bm25S3321_1_preheatCountdown2(): boolean {
+    export function preheatingNotCompletedOfCO2(): boolean {
         if (input.runningTime() < 80000)   //Does the running time exceed 80 seconds
         {
             return true;
@@ -1065,21 +1058,22 @@ namespace bmduino {
      * Read CO2
      * @return CO2 concentration value(unit:ppm).
      */
-    //% blockId=bm25S3321_1_readCO2 block="Read CO2 value"
+    //% blockId=bmduino_readCO2 block="read CO2 value"
     //% subcategory="CO2 module"
     //% weight=10
-    export function bm25S3321_1_readCO2(): number {
+    export function readCO2(): number {
         let CO2 = 0;
         let sendBuf: number[] = [0xff, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79]
-        bm25S3321_1_writeBytes(sendBuf);
-        if (bm25S3321_1_readBytes(9, 20) == 0) {
+        writeBytesForCO2(sendBuf);
+        if (readBytesForCO2(9, 20) == 0) {
             CO2 = ((bm25S3321_1_rXBuff[2] << 8) | bm25S3321_1_rXBuff[3]);
         }
         basic.pause(1);
         return CO2;
     }
 
-    function bm25S3321_1_writeBytes(writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesForCO2
+    function writeBytesForCO2(writeBuff: number[]): void {
         serial.redirect(bm25S3321_1_txPin, bm25S3321_1_rxPin, BaudRate.BaudRate9600); // redirect uart
         basic.pause(5);
         let sendBuff = pins.createBuffer(writeBuff.length);
@@ -1090,7 +1084,8 @@ namespace bmduino {
         serial.writeBuffer(sendBuff);
     }
 
-    function bm25S3321_1_readBytes(length: number, timeOut: number): number {
+    //% blockId=bmduino_readBytesForCO2
+    function readBytesForCO2(length: number, timeOut: number): number {
         let checkSum = 0;
         let lastreadLength = 0;  //Last received byte count
         let readLength = 0;  //Received byte count
@@ -1131,26 +1126,26 @@ namespace bmduino {
     let bm22S2021_1_rxPin: SerialPin;  //rxPin
     let bm22S2021_1_txPin: SerialPin;  //txPin
     let bm22S2021_1_intPin = DigitalPin.P2;
-    let bm22S2021_1_rXBuff: number[] = []; 
+    let bm22S2021_1_rXBuff: number[] = [];
 
     /**
      * Initialize module(smoke detector module)
      * @param uart UART interface selection
      */
-    //% blockId=BM22S2021_begin block="Initialize smoke detector module,channel %uart"
-    //% subcategory="smoke detector module" 
+    //% blockId=bmduino_initSmokeModule block="initialize smoke detector module,channel %uart"
+    //% subcategory="Smoke detector module" 
     //% weight=3
-    export function BM22S2021_begin(uart: BMduino_UARTChannel): void {
+    export function initSmokeModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
-        if (uart == BMduino_UARTChannel.UART1) {
+        if (uart == BMduinoUARTChannel.UART1) {
             bm22S2021_1_rxPin = SerialPin.P1;   // UART1 RX
             bm22S2021_1_txPin = SerialPin.P0;   // UART1 TX
             bm22S2021_1_intPin = DigitalPin.P2; // UART1 INT
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bm22S2021_1_rxPin = SerialPin.P13;  // UART2 RX
             bm22S2021_1_txPin = SerialPin.P12;  // UART2 TX
             bm22S2021_1_intPin = DigitalPin.P8; // UART2 INT
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bm22S2021_1_rxPin = SerialPin.P16;  // UART3 RX
             bm22S2021_1_txPin = SerialPin.P15;  // UART3 TX
             bm22S2021_1_intPin = DigitalPin.P14;// UART3 INT
@@ -1160,7 +1155,7 @@ namespace bmduino {
         serial.setRxBufferSize(255); // Set rxBuffer size to 255
         serial.setTxBufferSize(255); // Set txBuffer size to 255
         pins.setPull(bm22S2021_1_intPin, PinPullMode.PullNone); //Int pin input
-        bm22S2021_1_setUploadMode();
+        setUploadModeForSmoke();
         basic.pause(100);
     }
 
@@ -1169,10 +1164,10 @@ namespace bmduino {
      * @param smoke Smoke type(smoke=1: white / smoke=2: black)
      * @return Smoke detection value(12-bit A/D value)
      */
-    //% blockId=bm22S2021_1_readSmokeValue block="Read %BMduino_SmokeType value"
-    //% subcategory="smoke detector module"
+    //% blockId=bmduino_readSmokeValue block="read %BMduinoSmokeType value"
+    //% subcategory="Smoke detector module"
     //% weight=1
-    export function bm22S2021_1_readSmokeValue(smoke: BMduino_SmokeType): number {
+    export function readSmokeValue(smoke: BMduinoSmokeType): number {
         let SmokeValueL = 0;
         let SmokeValueH = 0;
         let SmokeValue = 0;
@@ -1181,26 +1176,26 @@ namespace bmduino {
 
         let sendBufL2: number[] = [0xD2, 0x9D, 0x00, 0x91]; //balck smoke's lowBytes
         let sendBufH2: number[] = [0xD2, 0x9E, 0x00, 0x90]; //balck smoke's highBytes
-        if (smoke == BMduino_SmokeType.WhiteSmoke) { //white smoke
-            bm22S2021_1_writeBytes(sendBufL1);
-            if (bm22S2021_1_readBytes(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9B) {
+        if (smoke == BMduinoSmokeType.WhiteSmoke) { //white smoke
+            writeBytesForSmoke(sendBufL1);
+            if (readBytesForSmoke(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9B) {
                 SmokeValueL = bm22S2021_1_rXBuff[6];
             }
             basic.pause(1);
-            bm22S2021_1_writeBytes(sendBufH1);
-            if (bm22S2021_1_readBytes(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9C) {
+            writeBytesForSmoke(sendBufH1);
+            if (readBytesForSmoke(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9C) {
                 SmokeValueH = bm22S2021_1_rXBuff[6];
             }
             basic.pause(1);
         }
-        if (smoke == BMduino_SmokeType.BlackSmoke) { //balck smoke
-            bm22S2021_1_writeBytes(sendBufL2);
-            if (bm22S2021_1_readBytes(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9D) {
+        if (smoke == BMduinoSmokeType.BlackSmoke) { //balck smoke
+            writeBytesForSmoke(sendBufL2);
+            if (readBytesForSmoke(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9D) {
                 SmokeValueL = bm22S2021_1_rXBuff[6];
             }
             basic.pause(1);
-            bm22S2021_1_writeBytes(sendBufH2);
-            if (bm22S2021_1_readBytes(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9E) {
+            writeBytesForSmoke(sendBufH2);
+            if (readBytesForSmoke(8, 60) == 0 && bm22S2021_1_rXBuff[5] == 0x9E) {
                 SmokeValueH = bm22S2021_1_rXBuff[6];
             }
             basic.pause(1);
@@ -1215,10 +1210,10 @@ namespace bmduino {
      * Check if the smoke alarm is triggered?
      * @return status.ture:Yes;false:No
      */
-    //% blockId=bm22S2021_1_getStatus block="Smoke alarm"
-    //% subcategory="smoke detector module"
+    //% blockId=bmduino_statusFromSmoke block="smoke alarm"
+    //% subcategory="Smoke detector module"
     //% weight=2
-    export function bm22S2021_1_getStatus(): boolean {
+    export function statusFromSmoke(): boolean {
         if (pins.digitalReadPin(bm22S2021_1_intPin) == 1) {
             return true;
         }
@@ -1228,12 +1223,14 @@ namespace bmduino {
     }
 
     // set "Command query mode" 
-    function bm22S2021_1_setUploadMode(): void {
+    //% blockId=bmduino_setUploadModeForSmoke
+    function setUploadModeForSmoke(): void {
         let sendBuf: number[] = [0xE0, 0x2E, 0x00, 0xF2];
-        bm22S2021_1_writeBytes(sendBuf);
+        writeBytesForSmoke(sendBuf);
     }
 
-    function bm22S2021_1_writeBytes(writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesForSmoke
+    function writeBytesForSmoke(writeBuff: number[]): void {
         serial.redirect(bm22S2021_1_txPin, bm22S2021_1_rxPin, BaudRate.BaudRate9600); // redirect uart
         basic.pause(5);
         let sendBuff = pins.createBuffer(writeBuff.length);
@@ -1244,7 +1241,8 @@ namespace bmduino {
         serial.writeBuffer(sendBuff);
     }
 
-    function bm22S2021_1_readBytes(length: number, timeOut: number): number {
+    //% blockId=bmduino_readBytesForSmoke
+    function readBytesForSmoke(length: number, timeOut: number): number {
         let checkSum = 0;
         let lastreadLength = 0;  //Last received byte count
         let readLength = 0;  //Received byte count
@@ -1290,20 +1288,20 @@ namespace bmduino {
      * Initialize module(PIR module)
      * @param uart UART interface selection
      */
-    //% blockId=bm22S4221_1_begin block="Initialize PIR module, channel %uart"
+    //% blockId=bmduino_initPIRModule block="initialize PIR module, channel %uart"
     //% subcategory="PIR module" 
     //% weight=40
-    export function bm22S4221_1_begin(uart: BMduino_UARTChannel): void {
+    export function initPIRModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
-        if (uart == BMduino_UARTChannel.UART1) {
+        if (uart == BMduinoUARTChannel.UART1) {
             bm22S4221_1_rxPin = SerialPin.P1;   // UART1 RX
             bm22S4221_1_txPin = SerialPin.P0;   // UART1 TX
             bm22S4221_1_intPin = DigitalPin.P2; // UART1 INT
-        } else if (uart == BMduino_UARTChannel.UART2) {
+        } else if (uart == BMduinoUARTChannel.UART2) {
             bm22S4221_1_rxPin = SerialPin.P13;  // UART2 RX
             bm22S4221_1_txPin = SerialPin.P12;  // UART2 TX
             bm22S4221_1_intPin = DigitalPin.P8; // UART2 INT
-        } else if (uart == BMduino_UARTChannel.UART3) {
+        } else if (uart == BMduinoUARTChannel.UART3) {
             bm22S4221_1_rxPin = SerialPin.P16;  // UART3 RX
             bm22S4221_1_txPin = SerialPin.P15;  // UART3 TX
             bm22S4221_1_intPin = DigitalPin.P14;// UART3 INT
@@ -1319,10 +1317,10 @@ namespace bmduino {
      * Preheating completed?
      * @return Status.ture:complete;false:incomple
      */
-    //% blockId=bm22S4221_1_preheatCountdown block="PIR module preheating completed"
+    //% blockId=bmduino_preheatingCompletedOfPIR block="PIR module preheating completed"
     //% subcategory="PIR module" 
     //% weight=30
-    export function bm22S4221_1_preheatCountdown(): boolean {
+    export function preheatingCompletedOfPIR(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
         {
             return false;
@@ -1334,10 +1332,10 @@ namespace bmduino {
      * Preheating not completed?
      * @return Status.ture:incomple;false:complete
      */
-    //% blockId=bm22S4221_1_preheatCountdown2 block="PIR module preheating not completed"
+    //% blockId=bmduino_preheatingNotCompletedOfPIR block="PIR module preheating not completed"
     //% subcategory="PIR module" 
     //% weight=20
-    export function bm22S4221_1_preheatCountdown2(): boolean {
+    export function preheatingNotCompletedOfPIR(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
         {
             return true;
@@ -1349,10 +1347,10 @@ namespace bmduino {
      * Check if PIR is triggered (someone approaching)?
      * @return Status.ture:Yes;false:No
      */
-    //% blockId=bm22S4221_1_getStatus block="PIR is triggered"
+    //% blockId=bmduino_statusFromPIR block="PIR is triggered"
     //% subcategory="PIR module" 
     //% weight=10
-    export function bm22S4221_1_getStatus(): boolean {
+    export function statusFromPIR(): boolean {
         if (pins.digitalReadPin(bm22S4221_1_intPin) == 1) {
             return true;
         }
@@ -1365,9 +1363,10 @@ namespace bmduino {
     // Modules Name    : 温湿度模块，溫濕度模組，Temperature & Humidity Module
     // Applicable types: BM25S2021-1/BME33M251/BME33M251A
     //----------------------------------------------------------
-    let bm25S2021_1_dataBuff: number[] = []; 
+    let bm25S2021_1_dataBuff: number[] = [];
     // I2C write
-    function bm25S2021_1_I2C_writeBytes(addr: number, writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesForTH
+    function writeBytesForTH(addr: number, writeBuff: number[]): void {
         let sendBuff = pins.createBuffer(writeBuff.length);
         for (let i = 0; i < writeBuff.length; i++) {
             sendBuff.setNumber(NumberFormat.UInt8LE, i, writeBuff[i]);
@@ -1376,7 +1375,8 @@ namespace bmduino {
     }
 
     // I2C read
-    function bm25S2021_1_I2C_readBytes(addr: number, length: number): number {  //Read data (address, byte count)
+    //% blockId=bmduino_readBytesForTH
+    function readBytesForTH(addr: number, length: number): number {  //Read data (address, byte count)
         try {
             let readBuffer = pins.i2cReadBuffer(addr, length); // IIC read
             for (let i = 0; i < length; i++) {
@@ -1389,7 +1389,8 @@ namespace bmduino {
     }
 
     //Clear the receiving buffer
-    function bm25S2021_1_clearBuff(): void {
+    //% blockId=bmduino_clearBuffForTH
+    function clearBuffForTH(): void {
         for (let i = 0; i < bm25S2021_1_dataBuff.length; i++) {
             bm25S2021_1_dataBuff[i] = 0;
         }
@@ -1398,10 +1399,10 @@ namespace bmduino {
     /**
      * Initialize module(temperature & humidity module)
      */
-    //% blockId=bm25S2021_1_begin block="Initialize temperature & humidity module"
-    //% subcategory="temperature & humidity module"
+    //% blockId=bmduino_initTemperatureAndHumidityModule block="initialize temperature & humidity module"
+    //% subcategory="Temperature & humidity module"
     //% weight=100
-    export function bm25S2021_1_begin(): void {
+    export function initTemperatureAndHumidityModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
     }
 
@@ -1410,23 +1411,23 @@ namespace bmduino {
      * @param unit Unit Selection(true:Fahrenheit degree;false:centigrade(default))
      * @return temperature.unit:℃（default）or ℉
      */
-    //% blockId=bm25S2021_1_readTemperature block="Read temperature (uint：%unit)" 
-    //% subcategory="temperature & humidity module"
+    //% blockId=bmduino_readTemperatureForTH block="read temperature (uint：%unit)" 
+    //% subcategory="Temperature & humidity module"
     //% weight=90
-    export function bm25S2021_1_readTemperature(unit: BMduino_TemperatureUnit): number {
+    export function readTemperatureForTH(unit: BMduinoTemperatureUnit): number {
         let temperature = 0;
         let sendbuf: number[] = [0x03, 0x02, 0x02]; // read temperature CMD
-        bm25S2021_1_clearBuff(); ////Clear buffer
+        clearBuffForTH(); ////Clear buffer
 
         // Send command and read data
-        bm25S2021_1_I2C_writeBytes(0x5C, sendbuf); // The sensor address is 0x5C
+        writeBytesForTH(0x5C, sendbuf); // The sensor address is 0x5C
         basic.pause(2); // Waiting for sensor response
-        if (bm25S2021_1_I2C_readBytes(0x5C, 6) == 0) { // read 6 bytes
+        if (readBytesForTH(0x5C, 6) == 0) { // read 6 bytes
             if (bm25S2021_1_dataBuff[2] == 0 && bm25S2021_1_dataBuff[3] == 0) {
                 return 0;  //Verification failed
             }
             temperature = (bm25S2021_1_dataBuff[2] << 8) | bm25S2021_1_dataBuff[3]; // Merge high and low level data
-            if (unit === BMduino_TemperatureUnit.Fahrenheit) {
+            if (unit === BMduinoTemperatureUnit.Fahrenheit) {
                 temperature = temperature * 0.18 + 32; // Fahrenheit temperature conversion
             } else {
                 temperature = temperature / 10; // Celsius temperature
@@ -1440,18 +1441,18 @@ namespace bmduino {
      * Read humidity
      * @return humidity.unit:%RH
      */
-    //% blockId=bm25S2021_1_readHumidity block="Read humidity"
-    //% subcategory="temperature & humidity module"
+    //% blockId=bmduino_readHumidityFromTH block="read humidity"
+    //% subcategory="Temperature & humidity module"
     //% weight=80
-    export function bm25S2021_1_readHumidity(): number {
+    export function readHumidityFromTH(): number {
         let humidity = 0;
         let sendbuf: number[] = [0x03, 0x00, 0x02]; // read humidity CMD
-        bm25S2021_1_clearBuff(); ////Clear buffer
+        clearBuffForTH(); ////Clear buffer
 
         // Send command and read data
-        bm25S2021_1_I2C_writeBytes(0x5C, sendbuf); // The sensor address is 0x5C
+        writeBytesForTH(0x5C, sendbuf); // The sensor address is 0x5C
         basic.pause(2); // Waiting for sensor response
-        if (bm25S2021_1_I2C_readBytes(0x5C, 6) == 0) { // read 6 bytes
+        if (readBytesForTH(0x5C, 6) == 0) { // read 6 bytes
             if (bm25S2021_1_dataBuff[2] == 0 && bm25S2021_1_dataBuff[3] == 0) {
                 return 0;  //Verification failed
             }
@@ -1466,14 +1467,15 @@ namespace bmduino {
     // Modules Name    : 环境光模块，環境光模組，Ambient Light Detection Module
     // Applicable types: bme82M131/bme82M131A
     //----------------------------------------------------------
-    let bme82M131_dataBuff: number[] = []; 
+    let bme82M131_dataBuff: number[] = [];
 
     const bme82M131_I2CAddr = 0x48;  // I2C_Addr(0x48~0x4f)
     const bme82M131_MID = 0x48;       // MID(0x48)
     let bme82M131_intPin = DigitalPin.P9;
 
     // I2C write
-    function bme82M131_I2C_writeBytes(addr: number, writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesForAmbientLight
+    function writeBytesForAmbientLight(addr: number, writeBuff: number[]): void {
         let sendBuff = pins.createBuffer(writeBuff.length);
         for (let i = 0; i < writeBuff.length; i++) {
             sendBuff.setNumber(NumberFormat.UInt8LE, i, writeBuff[i]);
@@ -1482,7 +1484,8 @@ namespace bmduino {
     }
 
     // I2C read
-    function bme82M131_I2C_readBytes(addr: number, length: number): number {  //Read data (address, byte count)
+    //% blockId=bmduino_readBytesForAmbientLight
+    function readBytesForAmbientLight(addr: number, length: number): number {  //Read data (address, byte count)
         try {
             let readBuffer = pins.i2cReadBuffer(addr, length); // IIC read
             for (let i = 0; i < length; i++) {
@@ -1495,21 +1498,23 @@ namespace bmduino {
     }
 
     //Clear the receiving buffer
-    function bme82M131_clearBuff(): void {
+    //% blockId=bmduino_clearBuffForAmbientLight
+    function clearBuffForAmbientLight(): void {
         for (let i = 0; i < bme82M131_dataBuff.length; i++) {
             bme82M131_dataBuff[i] = 0;
         }
     }
 
-    function bme82M131_initialize(): number {
-        bme82M131_clearBuff();  //clear buff
-        let moduleNumber = bme82M131_getNumber();
+    //% blockId=bmduino_initializeAmbientLightModule
+    function initializeAmbientLightModule(): number {
+        clearBuffForAmbientLight();  //clear buff
+        let moduleNumber = numberOfAmbientLightModule();
         for (let i = 1; i <= moduleNumber; i++) {
             let sendbuf: number[] = [bme82M131_MID, i, 0x04, 0x02, 0x00, 0x00, ((bme82M131_MID + i + 0x04 + 0x02) & 0xFF)]; // 設置ALS參數指令
             // Send command and read data
-            bme82M131_I2C_writeBytes(bme82M131_I2CAddr, sendbuf);
+            writeBytesForAmbientLight(bme82M131_I2CAddr, sendbuf);
             basic.pause(15); // Waiting for sensor response
-            if (bme82M131_I2C_readBytes(bme82M131_I2CAddr, 5) == 0) { // read 5 bytes
+            if (readBytesForAmbientLight(bme82M131_I2CAddr, 5) == 0) { // read 5 bytes
                 if (bme82M131_dataBuff[0] != bme82M131_MID && bme82M131_dataBuff[3] != 0) {
                     return 0;  //Verification failed
                 }
@@ -1522,30 +1527,30 @@ namespace bmduino {
     /**
      * Initialize module(ambient light module)
      */
-    //% blockId=bme82M131_begin block="Initialize ambient light module"
-    //% subcategory="ambient light module"
+    //% blockId=bmduino_initAmbientLightModule block="initialize ambient light module"
+    //% subcategory="Ambient light module"
     //% weight=100
-    export function bme82M131_begin(): void {
+    export function initAmbientLightModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
-        bme82M131_initialize();
+        initializeAmbientLightModule();
     }
 
     /**
      * Obtain the number of ambient light modules
      * @return Module Number
      */
-    //% blockId=bme82M131_getNumber block="Obtain the number of ambient light modules"
-    //% subcategory="ambient light module"
+    //% blockId=bmduino_numberOfAmbientLightModule block="obtain the number of ambient light modules"
+    //% subcategory="Ambient light module"
     //% weight=90
-    export function bme82M131_getNumber(): number {
+    export function numberOfAmbientLightModule(): number {
         let moduleNumber = 0;
         let sendbuf: number[] = [bme82M131_MID, 0x01, 0x02, 0x01, ((bme82M131_MID + 0x01 + 0x02 + 0x01) & 0xFF)]; // 讀取模组级联数量
-        bme82M131_clearBuff();  //clear buff
+        clearBuffForAmbientLight();  //clear buff
 
         // Send command and read data
-        bme82M131_I2C_writeBytes(bme82M131_I2CAddr, sendbuf);
+        writeBytesForAmbientLight(bme82M131_I2CAddr, sendbuf);
         basic.pause(15); // Waiting for sensor response
-        if (bme82M131_I2C_readBytes(bme82M131_I2CAddr, 6) == 0) { // read 6 bytes
+        if (readBytesForAmbientLight(bme82M131_I2CAddr, 6) == 0) { // read 6 bytes
             if (bme82M131_dataBuff[0] != bme82M131_MID && bme82M131_dataBuff[3] != 0) {
                 return 0;  //Verification failed
             }
@@ -1560,18 +1565,18 @@ namespace bmduino {
      * @param sensorID Module ID
      * @return Ambient Light value.uint:Lux
      */
-    //% blockId=bme82M131_readALS block="Read the ambient light value(lux) (ID %sensorID)"
-    //% subcategory="ambient light module"
+    //% blockId=bmduino_readALS block="read the ambient light value(lux) (ID %sensorID)"
+    //% subcategory="Ambient light module"
     //% weight=80
     //% sensorID.defl=1
-    export function bme82M131_readALS(sensorID: number): number {
+    export function readALS(sensorID: number): number {
         let rawData = 0;
         let sendbuf: number[] = [bme82M131_MID, sensorID, 0x02, 0x0A, ((bme82M131_MID + sensorID + 0x02 + 0x0A) & 0xFF)]; // 讀取環境光命令
-        bme82M131_clearBuff();  //clear buff
+        clearBuffForAmbientLight();  //clear buff
         // Send command and read data
-        bme82M131_I2C_writeBytes(bme82M131_I2CAddr, sendbuf);
+        writeBytesForAmbientLight(bme82M131_I2CAddr, sendbuf);
         basic.pause(15); // Waiting for sensor response
-        if (bme82M131_I2C_readBytes(bme82M131_I2CAddr, 7) == 0) { // read 7 bytes
+        if (readBytesForAmbientLight(bme82M131_I2CAddr, 7) == 0) { // read 7 bytes
             if (bme82M131_dataBuff[0] != bme82M131_MID && bme82M131_dataBuff[3] != 0) {
                 return 0;  //Verification failed
             }
@@ -1586,7 +1591,7 @@ namespace bmduino {
     // Modules Name    : 4-KEY电容式触控模块，4-KEY電容式觸控模組，4-KEY Capacitive Touch Module
     // Applicable types: bmk52M134/bmk52M134A
     //----------------------------------------------------------
-    let bmk52M134_dataBuff: number[] = []; 
+    let bmk52M134_dataBuff: number[] = [];
 
     const bmk52M134_I2CAddr = 0x71;  // I2C_Addr(0x71)
     const bmk52M134_MID = 0x71;       // MID(0x71)
@@ -1601,7 +1606,8 @@ namespace bmduino {
     const bmk52M134_CMD_getSleepEN = 0x06   // get sleepEN
 
     // I2C write
-    function bmk52M134_I2C_writeBytes(addr: number, writeBuff: number[]): void {
+    //% blockId=bmduino_writeBytesFor4Key
+    function writeBytesFor4Key(addr: number, writeBuff: number[]): void {
         let sendBuff = pins.createBuffer(writeBuff.length);
         for (let i = 0; i < writeBuff.length; i++) {
             sendBuff.setNumber(NumberFormat.UInt8LE, i, writeBuff[i]);
@@ -1610,7 +1616,8 @@ namespace bmduino {
     }
 
     // I2C read
-    function bmk52M134_I2C_readBytes(addr: number, length: number): number {  //Read data (address, byte count)
+    //% blockId=bmduino_readBytesFor4Key
+    function readBytesFor4Key(addr: number, length: number): number {  //Read data (address, byte count)
         try {
             let readBuffer = pins.i2cReadBuffer(addr, length); // IIC read
             for (let i = 0; i < length; i++) {
@@ -1623,7 +1630,8 @@ namespace bmduino {
     }
 
     //Clear the receiving buffer
-    function bmk52M134_clearBuff(): void {
+    //% blockId=bmduino_clearBuffFor4Key
+    function clearBuffFor4Key(): void {
         for (let i = 0; i < bmk52M134_dataBuff.length; i++) {
             bmk52M134_dataBuff[i] = 0;
         }
@@ -1632,10 +1640,10 @@ namespace bmduino {
     /**
      * Initialize module(4-KEY touch module)
      */
-    //% blockID=bmk52M134_begin block="Initialize 4-KEY touch module"
+    //% blockId=bmduino_init4KeyModule block="initialize 4-KEY touch module"
     //% subcategory="4-KEY touch module"
     //% weight=100
-    export function bmk52M134_begin(): void {
+    export function init4KeyModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
         pins.setPull(bmk52M134_intPin, PinPullMode.PullUp); //Int pin input上拉
     }
@@ -1644,18 +1652,18 @@ namespace bmduino {
      * Obtain the number of 4-KEY touch modules
      * @return Module number
      */
-    //% blockID=bmk52M134_getNumber block="Obtain the number of 4-KEY touch modules"
+    //% blockId=bmduino_numberOf4KeyModule block="obtain the number of 4-KEY touch modules"
     //% subcategory="4-KEY touch module"
     //% weight=90
-    export function bmk52M134_getNumber(): number {
+    export function numberOf4KeyModule(): number {
         let moduleNumber = 0;
         let sendbuf: number[] = [bmk52M134_MID, 0x00, 0x02, bmk52M134_CMD_checkModule, ((bmk52M134_MID + 0x02 + bmk52M134_CMD_checkModule) & 0xFF)]; // 讀取模组级联数量
-        bmk52M134_clearBuff();  //clear buff
+        clearBuffFor4Key();  //clear buff
 
         // Send command and read data
-        bmk52M134_I2C_writeBytes(bmk52M134_I2CAddr, sendbuf);
+        writeBytesFor4Key(bmk52M134_I2CAddr, sendbuf);
         basic.pause(15); // Waiting for sensor response
-        if (bmk52M134_I2C_readBytes(bmk52M134_I2CAddr, 6) == 0) { // read 6 bytes
+        if (readBytesFor4Key(bmk52M134_I2CAddr, 6) == 0) { // read 6 bytes
             if (bmk52M134_dataBuff[0] != bmk52M134_MID && bmk52M134_dataBuff[3] != 0) {
                 return 0;  //Verification failed
             }
@@ -1669,10 +1677,10 @@ namespace bmduino {
      * Touch pressed?
      * @return Status.0-Pressed down;1-Not pressed
      */
-    //% blockID=bmk52M134_getINT block="4-KEY touch pressed?"
+    //% blockId=bmduino_pressedFrom4Key block="4-KEY touch pressed?"
     //% subcategory="4-KEY touch module"
     //% weight=80
-    export function bmk52M134_getINT(): boolean {
+    export function pressedFrom4Key(): boolean {
         if (pins.digitalReadPin(bmk52M134_intPin) == 1) {
             return false;
         }
@@ -1683,20 +1691,20 @@ namespace bmduino {
     * Get key value
     * @return KeyValue.
     */
-    //% blockID=bmk52M134_getKeyValue block="Obtain the serial number of the pressed touch"
+    //% blockId=bmduino_readKeyFrom4Key block="obtain the serial number of 4-KEY touch"
     //% subcategory="4-KEY touch module"
     //% weight=70
-    export function bmk52M134_getKeyValue(): number {
+    export function readKeyFrom4Key(): number {
         let keyValue = 0;
-        let moduleNumber = bmk52M134_getNumber();
+        let moduleNumber = numberOf4KeyModule();
 
         let sendbuf: number[] = [bmk52M134_MID, 0x00, 0x02, bmk52M134_CMD_keyScan, ((bmk52M134_MID + 0x02 + bmk52M134_CMD_keyScan) & 0xFF)]; // 讀取按鍵值
-        bmk52M134_clearBuff();  //clear buff
+        clearBuffFor4Key();  //clear buff
 
         // Send command and read data
-        bmk52M134_I2C_writeBytes(bmk52M134_I2CAddr, sendbuf);
+        writeBytesFor4Key(bmk52M134_I2CAddr, sendbuf);
         basic.pause(15); // Waiting for sensor response
-        if (bmk52M134_I2C_readBytes(bmk52M134_I2CAddr, 5 + moduleNumber) == 0) {
+        if (readBytesFor4Key(bmk52M134_I2CAddr, 5 + moduleNumber) == 0) {
             if (bmk52M134_dataBuff[0] != bmk52M134_MID && bmk52M134_dataBuff[3] != 0) {
                 return 0;  //Verification failed
             }
@@ -1718,12 +1726,12 @@ namespace bmduino {
     * A touch is pressed？
     * @return Status.0-Pressed down;1-Not pressed
     */
-    //% blockID=bmk52M134_isPressed block="Is touch %key pressed?"
+    //% blockId=bmduino_isPressedFrom4Key block="is touch %key pressed?"
     //% subcategory="4-KEY touch module"
     //% key.min=1 key.max=16 key.defl=1
     //% weight=60
-    export function bmk52M134_isPressed(key: number): boolean {
-        if (bmk52M134_getKeyValue() == key) {
+    export function isPressedFrom4Key(key: number): boolean {
+        if (readKeyFrom4Key() == key) {
             return true;
         }
         return false;
@@ -1781,31 +1789,32 @@ namespace bmduino {
     // Parameters:  cmd: command
     // Return:      void
     //---------------------------
-    function bmd31M090_command(cmd: number) {
+    //% blockId=bmduino_commandForOLED
+    function commandForOLED(cmd: number) {
         let buf = pins.createBuffer(2);
         buf[0] = 0x00;
         buf[1] = cmd;
         pins.i2cWriteBuffer(chipAdress, buf, false);
     }
 
-    bmd31M090_command(0xd6); // Set zoom in command
-    bmd31M090_command(_ZOOM);
+    commandForOLED(0xd6); // Set zoom in command
+    commandForOLED(_ZOOM);
 
     /**
     * Clear the OLED display
     */
-    //% blockID=bmd31M090_clearDisplay block="Clear display"
+    //% blockId=bmduino_clearDisplayOLED block="clear display"
     //% subcategory="OLED module"
     //% weight=10
-    export function bmd31M090_clearDisplay() {
+    export function clearDisplayOLED() {
         loadStarted = false;
         loadPercent = 0;
-        bmd31M090_command(SSD1306_SETCOLUMNADRESS);
-        bmd31M090_command(0x00);
-        bmd31M090_command(displayWidth - 1);
-        bmd31M090_command(SSD1306_SETPAGEADRESS);
-        bmd31M090_command(0x00);
-        bmd31M090_command(displayHeight - 1);
+        commandForOLED(SSD1306_SETCOLUMNADRESS);
+        commandForOLED(0x00);
+        commandForOLED(displayWidth - 1);
+        commandForOLED(SSD1306_SETPAGEADRESS);
+        commandForOLED(0x00);
+        commandForOLED(displayHeight - 1);
         let data = pins.createBuffer(17);
         data[0] = 0x40; // Data Mode
         for (let i = 1; i < 17; i++) {
@@ -1825,18 +1834,18 @@ namespace bmduino {
     * Write string (NewLine)
     * @param str The string on FontTable
     */
-    export function bmd31M090_writeStringNewLine(str: string) {
-        bmd31M090_writeString(str);
-        bmd31M090_newLine();
+    function writeStringNewLineOLED(str: string) {
+        writeStringOLED(str);
+        newLineOLED();
     }
 
     /**
     * Write number (NewLine)
     * @param n The Num on FontTable
     */
-    export function bmd31M090_writeNumNewLine(n: number) {
-        bmd31M090_writeNum(n);
-        bmd31M090_newLine();
+    function writeNumNewLineOLED(n: number) {
+        writeNumOLED(n);
+        newLineOLED();
     }
 
 
@@ -1844,15 +1853,15 @@ namespace bmduino {
     * Write string (without newLine)
     * @param str The string on FontTable
     */
-    //% blockID=bmd31M090_writeString block="Write string $str"
+    //% blockId=bmduino_writeStringOLED block="write string $str"
     //% subcategory="OLED module"
     //% weight=70
-    export function bmd31M090_writeString(str: string) {
+    export function writeStringOLED(str: string) {
         for (let i = 0; i < str.length; i++) {
             if (charX > displayWidth - (charWidth * _ZOOM_X)) {
-                bmd31M090_newLine();
+                newLineOLED();
             }
-            bmd31M090_drawChar(charX, charY, str.charAt(i));
+            drawCharOLED(charX, charY, str.charAt(i));
             charX += charWidth * _ZOOM_X; // Width adjusted according to _ZOOM_X
         }
     }
@@ -1861,22 +1870,22 @@ namespace bmduino {
     * Write number (without newLine)
     * @param n The Num on FontTable
     */
-    //% blockID=bmd31M090_writeNum block="Write number $n"
+    //% blockId=bmduino_writeNumOLED block="write number $n"
     //% subcategory="OLED module"
     //% weight=60
-    export function bmd31M090_writeNum(n: number) {
+    export function writeNumOLED(n: number) {
         let n_tep = Math.floor(n * 100) / 100;  //Keep 2 decimal places
         let numString = n_tep.toString();
-        bmd31M090_writeString(numString);
+        writeStringOLED(numString);
     }
 
     /**
     * NewLine
     */
-    //% blockID=bmd31M090_newLine block="Line breaks"
+    //% blockId=bmduino_newLineOLED block="line breaks"
     //% subcategory="OLED module"
     //% weight=50
-    export function bmd31M090_newLine() {
+    export function newLineOLED() {
         charY++;
         charX = xOffset;
     }
@@ -1887,12 +1896,12 @@ namespace bmduino {
     * @param placeX Row
     * @param str The string on FontTable
     */
-    //% blockID=bmd31M090_writeStringPlace block="Line %placeY,character %placeX,write string $str"
+    //% blockId=bmduino_writeStringPlaceOLED block="line %placeY,character %placeX,write string $str"
     //% placeX.defl=1
     //% placeY.min=1 placeY.max=4 placeY.defl=1
     //% subcategory="OLED module"
     //% weight=40
-    export function bmd31M090_writeStringPlace(placeY: number, placeX: number, str: string) {
+    export function writeStringPlaceOLED(placeY: number, placeX: number, str: string) {
         let charY_place = placeY - 1;                         //Line : charY_place
         let charX_place = charWidth * _ZOOM_X * (placeX - 1); //Row : charX_place
         charX_lastPlace = charX_place;
@@ -1901,7 +1910,7 @@ namespace bmduino {
             if (charX_place > displayWidth - (charWidth * _ZOOM_X)) {
                 break;
             }
-            bmd31M090_drawChar(charX_place, charY_place, str.charAt(i));
+            drawCharOLED(charX_place, charY_place, str.charAt(i));
             charX_place += charWidth * _ZOOM_X; // Width adjusted according to _ZOOM_X
         }
         charX = charX_place;
@@ -1914,22 +1923,22 @@ namespace bmduino {
     * @param placeX Row
     * @param n The Num on FontTable
     */
-    //% blockID=bmd31M090_writeNumPlace block="Line %placeY,character %placeX,write number $n"
+    //% blockId=bmduino_writeNumPlaceOLED block="line %placeY,character %placeX,write number $n"
     //% subcategory="OLED module"
     //% placeX.defl=1
     //% placeY.min=1 placeY.max=4 placeY.defl=1
     //% weight=30
-    export function bmd31M090_writeNumPlace(placeY: number, placeX: number, n: number) {
+    export function writeNumPlaceOLED(placeY: number, placeX: number, n: number) {
         let n_tep = Math.floor(n * 100) / 100;  //Keep 2 decimal places
         let numString = n_tep.toString();
-        //bmd31M090_writeStringPlace(placeY, placeX, numString);
+        //writeStringPlaceOLED(placeY, placeX, numString);
         let charY_place = placeY - 1;                         //Line : charY_place
         let charX_place = charWidth * _ZOOM_X * (placeX - 1); //Row : charX_place
         for (let i = 0; i < numString.length; i++) {
             if (charX_place > displayWidth - (charWidth * _ZOOM_X)) {
                 break;
             }
-            bmd31M090_drawChar(charX_place, charY_place, numString.charAt(i));
+            drawCharOLED(charX_place, charY_place, numString.charAt(i));
             charX_place += charWidth * _ZOOM_X; // Width adjusted according to _ZOOM_X
         }
         charX = charX_place;
@@ -1942,7 +1951,7 @@ namespace bmduino {
                 basic.showIcon(IconNames.Yes);
                 break;
             }
-            bmd31M090_drawChar(charX_place, charY_place, " ");
+            drawCharOLED(charX_place, charY_place, " ");
             charX_place += charWidth * _ZOOM_X; // Width adjusted according to _ZOOM_X
         }
     }
@@ -1954,13 +1963,14 @@ namespace bmduino {
     //              c : The char on FontTable.
     // Return:      void
     //---------------------------
-    function bmd31M090_drawChar(x: number, y: number, c: string) {
-        bmd31M090_command(SSD1306_SETCOLUMNADRESS);
-        bmd31M090_command(x);
-        bmd31M090_command(x + charWidth * _ZOOM_X);
-        bmd31M090_command(SSD1306_SETPAGEADRESS);
-        bmd31M090_command(y);
-        bmd31M090_command(y);
+    //% blockId=bmduino_drawCharOLED
+    function drawCharOLED(x: number, y: number, c: string) {
+        commandForOLED(SSD1306_SETCOLUMNADRESS);
+        commandForOLED(x);
+        commandForOLED(x + charWidth * _ZOOM_X);
+        commandForOLED(SSD1306_SETPAGEADRESS);
+        commandForOLED(y);
+        commandForOLED(y);
 
         let line = pins.createBuffer(1 + 5 * _ZOOM_X);
         line[0] = 0x40;
@@ -1981,37 +1991,37 @@ namespace bmduino {
     * @param width Display width in pixels
     * @param height Display height in pixels
     */
-    //% blockID=bmd31M090_init block="Initialize OLED module,Width $width Height $height"
+    //% blockId=bmduino_initOLEDModule block="initialize OLED module,Width $width Height $height"
     //% width.defl=128
     //% height.defl=64
     //% subcategory="OLED module"
     //% weight=100
-    export function bmd31M090_init(width: number, height: number) {
-        bmd31M090_command(SSD1306_DISPLAYOFF);
-        bmd31M090_command(SSD1306_SETDISPLAYCLOCKDIV);
-        bmd31M090_command(0x80);                                  // the suggested ratio 0x80
-        bmd31M090_command(SSD1306_SETMULTIPLEX);
-        bmd31M090_command(0x3F);
-        bmd31M090_command(SSD1306_SETDISPLAYOFFSET);
-        bmd31M090_command(0x0);                                   // no offset
-        bmd31M090_command(SSD1306_SETSTARTLINE | 0x0);            // line #0
-        bmd31M090_command(SSD1306_CHARGEPUMP);
-        bmd31M090_command(0x14);
-        bmd31M090_command(SSD1306_MEMORYMODE);
-        bmd31M090_command(0x00);                                  // 0x0 act like ks0108
-        bmd31M090_command(SSD1306_SEGREMAP | 0x1);
-        bmd31M090_command(SSD1306_COMSCANDEC);
-        bmd31M090_command(SSD1306_SETCOMPINS);
-        bmd31M090_command(0x12);
-        bmd31M090_command(SSD1306_SETCONTRAST);
-        bmd31M090_command(0xCF);
-        bmd31M090_command(SSD1306_SETPRECHARGE);
-        bmd31M090_command(0xF1);
-        bmd31M090_command(SSD1306_SETVCOMDETECT);
-        bmd31M090_command(0x40);
-        bmd31M090_command(SSD1306_DISPLAYALLON_RESUME);
-        bmd31M090_command(SSD1306_NORMALDISPLAY);
-        bmd31M090_command(SSD1306_DISPLAYON);
+    export function initOLEDModule(width: number, height: number) {
+        commandForOLED(SSD1306_DISPLAYOFF);
+        commandForOLED(SSD1306_SETDISPLAYCLOCKDIV);
+        commandForOLED(0x80);                                  // the suggested ratio 0x80
+        commandForOLED(SSD1306_SETMULTIPLEX);
+        commandForOLED(0x3F);
+        commandForOLED(SSD1306_SETDISPLAYOFFSET);
+        commandForOLED(0x0);                                   // no offset
+        commandForOLED(SSD1306_SETSTARTLINE | 0x0);            // line #0
+        commandForOLED(SSD1306_CHARGEPUMP);
+        commandForOLED(0x14);
+        commandForOLED(SSD1306_MEMORYMODE);
+        commandForOLED(0x00);                                  // 0x0 act like ks0108
+        commandForOLED(SSD1306_SEGREMAP | 0x1);
+        commandForOLED(SSD1306_COMSCANDEC);
+        commandForOLED(SSD1306_SETCOMPINS);
+        commandForOLED(0x12);
+        commandForOLED(SSD1306_SETCONTRAST);
+        commandForOLED(0xCF);
+        commandForOLED(SSD1306_SETPRECHARGE);
+        commandForOLED(0xF1);
+        commandForOLED(SSD1306_SETVCOMDETECT);
+        commandForOLED(0x40);
+        commandForOLED(SSD1306_DISPLAYALLON_RESUME);
+        commandForOLED(SSD1306_NORMALDISPLAY);
+        commandForOLED(SSD1306_DISPLAYON);
         displayWidth = width
         displayHeight = height / 8
         screenSize = displayWidth * displayHeight
@@ -2275,6 +2285,6 @@ namespace bmduino {
     0000000000`
         loadStarted = false
         loadPercent = 0
-        bmd31M090_clearDisplay()
+        clearDisplayOLED()
     }
 }

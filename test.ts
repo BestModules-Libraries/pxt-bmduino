@@ -1,1 +1,10 @@
-// tests go here; this will not be compiled when this package is used as a library
+bmduino.initOLEDModule(128, 64)
+bmduino.clearDisplayOLED()
+bmduino.writeStringPlaceOLED(1, 1, "Hello 123!")
+bmduino.writeStringOLED("Hello ")
+bmduino.writeNumOLED(123)
+bmduino.writeStringOLED("!")
+bmduino.newLineOLED()
+basic.forever(function () {
+	
+})

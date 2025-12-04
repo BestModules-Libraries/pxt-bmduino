@@ -254,6 +254,7 @@ basic.forever(function () {
 
 ## Version History
 * v1.0.0 - Initial public release（beta）.
+* v1.0.1 - Improve standards（beta）.
 
 ## License
 

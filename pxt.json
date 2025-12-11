@@ -1,7 +1,7 @@
 {
     "name": "bmduino",
-    "version": "1.0.1",
-    "description": "Extension for BMduino(BestModules),micro:bit(v2)only.Beta.",
+    "version": "1.0.3",
+    "description": "Extension for BestModules BMduino.micro:bit(v2)only - beta.",
     "license": "MIT",
     "dependencies": {
         "core": "*"

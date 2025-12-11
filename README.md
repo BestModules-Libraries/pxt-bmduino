@@ -1,6 +1,6 @@
 # BMduino
 
-Extension for BMduino(BestModules),micro:bit(v2)only.  
+Extension for BestModules BMduino. Works with micro:bit v2 only - beta.  
 
 ## User Manual of BMB81TM01A
 https://www.bestmodulescorp.com/en/amfile/file/download/file/2588/product/1418/
@@ -161,7 +161,7 @@ bmduino.clearDisplayOLED()
 bmduino.writeStringPlaceOLED(2, 1, "PM2.5:")
 bmduino.writeStringPlaceOLED(4, 6, "ug/m3")
 basic.forever(function () {
-    bmduino.writeNumPlaceOLED(3, 2, bmduino.readPM(BMduinoPMType.PM2))
+    bmduino.writeNumPlaceOLED(3, 2, bmduino.readPM(BMduinoPMType.PM2p5))
     basic.pause(1000)
 })
 ```

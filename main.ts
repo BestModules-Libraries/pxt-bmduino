@@ -91,9 +91,8 @@ namespace bmduino {
     * Connect To WiFi 
     * @param ssid WIFI ssid
     * @param password WIFI password
-    * @return void
     */
-    //% blockId=bmduino_bw16ConnectToWiFi block="WiFi name %ssid Password %password"
+    //% blockId=bmduino_bw16ConnectToWiFi block="WiFi name %ssid password %password"
     //% weight=100
     export function bw16ConnectToWiFi(ssid: string, password: string): boolean {
         let ret = false;
@@ -149,12 +148,12 @@ namespace bmduino {
 
 
     /**
-    * Connect To thinkSpeak
-    * @param client ThinkSpeak client
-    * @param name ThinkSpeak name
-    * @param password ThinkSpeak Password
+    * Connect To ThingSpeak
+    * @param client ThingSpeak client
+    * @param name ThingSpeak name
+    * @param password ThingSpeak Password
     */
-    //% blockId=bmduino_bw16SendMQTT block="thingSpeak |  Client ID %client| Username %name| Password %password|"
+    //% blockId=bmduino_bw16SendMQTT block="ThingSpeak |  client ID %client| username %name| password %password|"
     //% weight=90
     export function bw16SendMQTT(client: string, name: string, password: string): boolean {
         let ret = false;
@@ -224,13 +223,13 @@ namespace bmduino {
 
 
     /**
-    * Connect To thinkSpeak
-    * @param client ThinkSpeak client
+    * Connect To ThingSpeak
+    * @param client ThingSpeak client
     * @param topic Publish topic is channel id
     * @param data Data1~data7 : field1~field8 data
     */
     //% expandableArgumentMode="enabled"
-    //% blockId=bmduino_bw16PublishTopic block="send data | Channel ID %topic| field1_data %data||field2_data %data1| field3_data %data2| field4_data %data3| field5_data %data4| field6_data %data5| field7_data %data6| field8_data %data7"
+    //% blockId=bmduino_bw16PublishTopic block="send data | channel ID %topic| field1_data %data||field2_data %data1| field3_data %data2| field4_data %data3| field5_data %data4| field6_data %data5| field7_data %data6| field8_data %data7"
     //% topic.defl=0 data.defl=0 data1.defl=0 data2.defl=0 data3.defl=0 data4.defl=0 data5.defl=0 data6.defl=0 data.defl=0
     //% weight=80
     export function bw16PublishTopic(topic: number = 0, data: number = 0, data1: number = 0, data2: number = 0, data3: number = 0, data4: number = 0, data5: number = 0, data6: number = 0, data7: number = 0): void {
@@ -319,11 +318,11 @@ namespace bmduino {
     let bmh08101_rxBuf: Buffer = pins.createBuffer(18)
 
     /**
-     * Initialize module (oximeter module)
+     * Initialize the oximeter module connected to the specified UART interface
      * @param uart UART interface selection
      */
-    //% blockId=bmduino_initOximeterModule block="initialize oximeter module,channel %uart"
-    //% subcategory="Oximeter module"
+    //% blockId=bmduino_initOximeterModule block="initialize oximeter %uart"
+    //% subcategory="Oximeter"
     //% weight=100
     export function initOximeterModule(uart: BMduinoUARTChannel): void {
         if (uart == BMduinoUARTChannel.UART1) {
@@ -366,7 +365,7 @@ namespace bmduino {
      * Start measure
      */
     //% blockId=bmduino_beginMeasureOximeter block="begin measure oximeter"
-    //% subcategory="Oximeter module"
+    //% subcategory="Oximeter"
     //% weight=90
     export function beginMeasureOximeter(): void {
         if (!bmh08101_initialized) return
@@ -385,11 +384,10 @@ namespace bmduino {
     }
 
     /**
-     * Check the oxygen measurement status
-     * @return oxygen Measurement status.0x00: sensor error;0x01: no finger detected;0x02: finger detected, measurement incomplete;0x03: finger detected, measurement completed
+     * Check the oxygen measurement status. 0x00: sensor error, 0x01: no finger detected, 0x02: finger detected, measurement incomplete, 0x03: finger detected, measurement completed
      */
     //% blockId=bmduino_requestInfoFromOximeter block="check the oximeter measurement status"
-    //% subcategory="Oximeter module"
+    //% subcategory="Oximeter"
     //% weight=85
     export function requestInfoFromOximeter(): number {
         serial.redirect(bmh08101_txPin, bmh08101_rxPin, BaudRate.BaudRate38400)
@@ -432,33 +430,30 @@ namespace bmduino {
     }
 
     /**
-     * Read SpO2 value
-     * @return SpO2 value(35~99%,uint:%).
+     * Read SpO2 value, 35~99%, uint:%
      */
-    //% blockId=bmduino_readSpO2 block="read SpO2"
-    //% subcategory="Oximeter module"
+    //% blockId=bmduino_readSpO2 block="SpO2"
+    //% subcategory="Oximeter"
     //% weight=84
     export function readSpO2(): number {
         return bmh08101_dataBuffer[0]
     }
 
     /**
-     * Read heartrate value
-     * @return heartrate value(30~250,uint:BPM).
+     * Read heartrate value, 30~250, uint:BPM
      */
-    //% blockId=bmduino_readHeartRate block="read heartrate"
-    //% subcategory="Oximeter module"
+    //% blockId=bmduino_readHeartRate block="heartrate"
+    //% subcategory="Oximeter"
     //% weight=82
     export function readHeartRate(): number {
         return bmh08101_dataBuffer[1]
     }
 
     /**
-     * Read blood perfusion index value
-     * @return blood perfusion index value(0~200,1 represents 0.1%).
+     * Read blood perfusion index value, 0~200, 1 represents 0.1%
      */
-    //% blockId=bmduino_readPI block="read blood perfusion index"
-    //% subcategory="Oximeter module"
+    //% blockId=bmduino_readPI block="blood perfusion index"
+    //% subcategory="Oximeter"
     //% weight=80
     export function readPI(): number {
         return Math.round(bmh08101_dataBuffer[2]) / 10  // PI/10 %
@@ -471,10 +466,10 @@ namespace bmduino {
     const bmh06203_i2cAddr = 0x28;
 
     /**
-     * Initialize module (IR thermometry module)
+     * Initialize the IR thermometry module
      */
-    //% blockId=bmduino_initIRThermometryModule block="initialize IR thermometry module"
-    //% subcategory="IR thermometry module" weight=255
+    //% blockId=bmduino_initIRThermometryModule block="initialize IR thermometry"
+    //% subcategory="IR thermometry" weight=255
     export function initIRThermometryModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
     }
@@ -482,10 +477,9 @@ namespace bmduino {
     /**
      * Read IR thermometry temperature
      * @param obj Temperature type selection
-     * @return Temperature.
      */
-    //% blockId=bmduino_readTemperatureFromIRThermometry block="read IR thermometry temperature%obj"
-    //% subcategory="IR thermometry module" weight=90
+    //% blockId=bmduino_readTemperatureFromIRThermometry block="IR thermometry temperature %obj"
+    //% subcategory="IR thermometry" weight=90
     export function readTemperatureFromIRThermometry(obj: BMduinoTemperatureObject): number {
         let configBuffer = pins.createBuffer(1);
         let temp_dataBuffer: number[] = [];//Store received data
@@ -531,12 +525,12 @@ namespace bmduino {
     let bm25S4021_1_rXBuff: number[] = [];
 
     /**
-     * Initialize module(TDS module)
+     * Initialize the TDS module connected to the specified UART interface
      * @param uart UART interface selection
      * @param id Module identification code
      */
-    //% blockId=bmduino_initTDSModule block="initialize TDS module,channel %uart"
-    //% subcategory="TDS module" 
+    //% blockId=bmduino_initTDSModule block="initialize TDS %uart"
+    //% subcategory="TDS" 
     //% weight=3
     export function initTDSModule(uart: BMduinoUARTChannel): void {
         bm25S4021_1_moduleID = 1;
@@ -561,10 +555,9 @@ namespace bmduino {
     /**
      * Read TDS value
      * @param channel Channels of TDS/NTC to be get
-     * @return Water quality concentration.
      */
-    //% blockId=bmduino_readTDS block="read %channel TDS value"
-    //% subcategory="TDS module" 
+    //% blockId=bmduino_readTDS block="TDS value %channel"
+    //% subcategory="TDS" 
     //% weight=2
     export function readTDS(channel: BMduinoTDSChannel): number {
         let TDS = 0;
@@ -582,12 +575,11 @@ namespace bmduino {
     }
 
     /**
-     * read temperature value
+     * read water temperature
      * @param channel Channels of TDS/NTC to be get
-     * @return Water temperature.
      */
-    //% blockId=bmduino_readTemperatureFromTDS block="read %channel temperature value"
-    //% subcategory="TDS module" 
+    //% blockId=bmduino_readTemperatureFromTDS block="water temperature %channel"
+    //% subcategory="TDS" 
     //% weight=1
     export function readTemperatureFromTDS(channel: BMduinoTDSChannel): number {
         let Temperature = 0;
@@ -603,7 +595,7 @@ namespace bmduino {
         basic.pause(10);
         return Temperature;
     }
-     
+
     //% blockId=bmduino_writeBytesForTDS
     function writeBytesForTDS(writeBuff: number[]): void {
         serial.redirect(bm25S4021_1_txPin, bm25S4021_1_rxPin, BaudRate.BaudRate9600);
@@ -661,11 +653,11 @@ namespace bmduino {
     let bm25S2621_1_rXBuff: number[] = [];
 
     /**
-     * Initialize module(soil module)
+     * Initialize the soil module connected to the specified UART interface
      * @param uart UART interface selection
      */
-    //% blockId=bmduino_initSoilModule block="initialize Soil module,channel %uart"
-    //% subcategory="Soil module"
+    //% blockId=bmduino_initSoilModule block="initialize soil %uart"
+    //% subcategory="Soil"
     //% weight=5
     export function initSoilModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
@@ -691,11 +683,10 @@ namespace bmduino {
     /**
      * Read module's moisture measurement value
      * @param id Current ID of module
-     * @return Module's moisture measurement value.
      */
-    //% blockId=bmduino_readMoistureFromSoil block="read soil moisture(ID = %id)"
+    //% blockId=bmduino_readMoistureFromSoil block="soil moisture, ID = %id"
     //% id.min=1 id.max=254 id.defl=1
-    //% subcategory="Soil module" 
+    //% subcategory="Soil" 
     //% weight=4
     export function readMoistureFromSoil(id: number = 1): number {
         let Moisture = 0;
@@ -714,11 +705,10 @@ namespace bmduino {
     /**
      * Read module's temperature measurement value
      * @param id Current ID of module
-     * @return Module's temperature measurement value
      */
-    //% blockId=bmduino_readTemperatureFromSoil block="read temperature(ID = %id)"
+    //% blockId=bmduino_readTemperatureFromSoil block="soil temperature, ID = %id"
     //% id.min=1 id.max=254 id.defl=1
-    //% subcategory="Soil module"
+    //% subcategory="Soil"
     //% weight=3
     export function readTemperatureFromSoil(id: number = 1): number {
         let Temperature = 0;
@@ -737,10 +727,9 @@ namespace bmduino {
 
     /**
      * Get module's ID
-     * @return Module's ID.1~254: module's ID;0: communication failure
      */
-    //% blockId=bmduino_readIDFromSoil block="read the ID of the soil module"
-    //% subcategory="Soil module" 
+    //% blockId=bmduino_readIDFromSoil block="the ID of the soil module"
+    //% subcategory="Soil" 
     //% weight=2
     export function readIDFromSoil(): number {
         let number = 0;
@@ -760,10 +749,10 @@ namespace bmduino {
      * @param currentID Current ID of module
      * @param newID New ID of module
      */
-    //% blockId=bmduino_setIDForSoil block="set the ID of the soil module (Current ID = %oldid|,Target ID = %newid)"
+    //% blockId=bmduino_setIDForSoil block="set the ID of the soil module, current ID = %oldid|, target ID = %newid"
     //% oldid.min=1 oldid.max=254 oldid.defl=1
     //% newid.min=1 newid.max=254 newid.defl=1
-    //% subcategory="Soil module"
+    //% subcategory="Soil"
     //% weight=1
     export function setIDForSoil(oldid: number = 1, newid: number = 1): void {
         let sendBuf: number[] = [0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
@@ -854,11 +843,11 @@ namespace bmduino {
     let bm25S3221_1_rXBuff: number[] = [];
 
     /**
-     * Initialize module(laser dust detection module)
+     * Initialize the laser dust detection module connected to the specified UART interface
      * @param uart UART interface selection
      */
-    //% blockId=bmduino_initLaserDustModule block="initialize laser dust detection module,channel %uart"
-    //% subcategory="Laser dust detection module"
+    //% blockId=bmduino_initLaserDustModule block="initialize laser dust detection %uart"
+    //% subcategory="Laser dust detection"
     //% weight=30
     export function initLaserDustModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
@@ -880,11 +869,10 @@ namespace bmduino {
     }
 
     /**
-     * Preheating completed?
-     * @return status.ture:complete;false:incomple
+     * Preheating completed? ture:complete, false:incomple
      */
     //% blockId=bmduino_preheatingCompletedOfLaserDust block="laser dust detection module preheating completed"
-    //% subcategory="Laser dust detection module"
+    //% subcategory="Laser dust detection"
     //% weight=20
     export function preheatingCompletedOfLaserDust(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
@@ -895,11 +883,10 @@ namespace bmduino {
     }
 
     /**
-     * Preheating not completed?
-     * @return status.ture:incomple;false:complete
+     * Preheating not completed? ture:incomple, false:complete
      */
     //% blockId=bmduino_preheatingNotCompletedOfLaserDust block="laser dust detection module preheating not completed"
-    //% subcategory="Laser dust detection module"
+    //% subcategory="Laser dust detection"
     //% weight=19
     export function preheatingNotCompletedOfLaserDust(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
@@ -912,10 +899,9 @@ namespace bmduino {
     /**
      * Read PM value
      * @param pm PM1/PM2.5/PM10
-     * @return pm value.
      */
     //% blockId=bmduino_readPM block="read %pm value"
-    //% subcategory="Laser dust detection module"
+    //% subcategory="Laser dust detection"
     //% weight=10
     export function readPM(pm: BMduinoPMType): number {
         let PM = 0;
@@ -999,11 +985,11 @@ namespace bmduino {
     let bm25S3321_1_rXBuff: number[] = [];
 
     /**
-     * Initialize module(CO2 module)
+     * Initialize the CO2 module connected to the specified UART interface
      * @param uart UART interface selection
      */
-    //% blockId=bmduino_initCO2Module block="initialize CO2 module,channel %uart"
-    //% subcategory="CO2 module"
+    //% blockId=bmduino_initCO2Module block="initialize CO2 %uart"
+    //% subcategory="CO2"
     //% weight=30
     export function initCO2Module(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
@@ -1025,11 +1011,10 @@ namespace bmduino {
 
 
     /**
-     * Preheating completed?
-     * @return status.ture:complete;false:incomple
+     * Preheating completed? ture:complete;false:incomple
      */
     //% blockId=bmduino_preheatingCompletedOfCO2 block="CO2 module preheating completed"
-    //% subcategory="CO2 module"
+    //% subcategory="CO2"
     //% weight=20
     export function preheatingCompletedOfCO2(): boolean {
         if (input.runningTime() < 80000)   //Does the running time exceed 80 seconds
@@ -1040,11 +1025,10 @@ namespace bmduino {
     }
 
     /**
-    * Preheating not completed?
-    * @return status.ture:incomple;false:complete
+    * Preheating not completed? ture:incomple, false:complete
     */
     //% blockId=bmduino_preheatingNotCompletedOfCO2 block="CO2 module preheating not completed"
-    //% subcategory="CO2 module"
+    //% subcategory="CO2"
     //% weight=19
     export function preheatingNotCompletedOfCO2(): boolean {
         if (input.runningTime() < 80000)   //Does the running time exceed 80 seconds
@@ -1055,11 +1039,10 @@ namespace bmduino {
     }
 
     /**
-     * Read CO2
-     * @return CO2 concentration value(unit:ppm).
+     * Read CO2 value, unit:ppm
      */
-    //% blockId=bmduino_readCO2 block="read CO2 value"
-    //% subcategory="CO2 module"
+    //% blockId=bmduino_readCO2 block="CO2 value"
+    //% subcategory="CO2"
     //% weight=10
     export function readCO2(): number {
         let CO2 = 0;
@@ -1129,11 +1112,11 @@ namespace bmduino {
     let bm22S2021_1_rXBuff: number[] = [];
 
     /**
-     * Initialize module(smoke detector module)
+     * Initialize the smoke detector module connected to the specified UART interface
      * @param uart UART interface selection
      */
-    //% blockId=bmduino_initSmokeModule block="initialize smoke detector module,channel %uart"
-    //% subcategory="Smoke detector module" 
+    //% blockId=bmduino_initSmokeModule block="initialize smoke detector %uart"
+    //% subcategory="Smoke detector" 
     //% weight=3
     export function initSmokeModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
@@ -1160,12 +1143,11 @@ namespace bmduino {
     }
 
     /**
-     * Read the white smoke detection value
-     * @param smoke Smoke type(smoke=1: white / smoke=2: black)
-     * @return Smoke detection value(12-bit A/D value)
+     * Read the white smoke detection value, 12-bit A/D value
+     * @param smoke Smoke type, smoke=1: white, smoke=2: black
      */
-    //% blockId=bmduino_readSmokeValue block="read %BMduinoSmokeType value"
-    //% subcategory="Smoke detector module"
+    //% blockId=bmduino_readSmokeValue block="%BMduinoSmokeType value"
+    //% subcategory="Smoke detector"
     //% weight=1
     export function readSmokeValue(smoke: BMduinoSmokeType): number {
         let SmokeValueL = 0;
@@ -1207,11 +1189,10 @@ namespace bmduino {
     }
 
     /**
-     * Check if the smoke alarm is triggered?
-     * @return status.ture:Yes;false:No
+     * Check if the smoke alarm is triggered? ture:yes, false:no
      */
     //% blockId=bmduino_statusFromSmoke block="smoke alarm"
-    //% subcategory="Smoke detector module"
+    //% subcategory="Smoke detector"
     //% weight=2
     export function statusFromSmoke(): boolean {
         if (pins.digitalReadPin(bm22S2021_1_intPin) == 1) {
@@ -1285,11 +1266,11 @@ namespace bmduino {
     let bm22S4221_1_rXBuff: number[] = [];
 
     /**
-     * Initialize module(PIR module)
+     * Initialize the PIR module connected to the specified UART interface
      * @param uart UART interface selection
      */
-    //% blockId=bmduino_initPIRModule block="initialize PIR module, channel %uart"
-    //% subcategory="PIR module" 
+    //% blockId=bmduino_initPIRModule block="initialize PIR %uart"
+    //% subcategory="PIR" 
     //% weight=40
     export function initPIRModule(uart: BMduinoUARTChannel): void {
         // Set the corresponding RX and TX pins based on the selected UART channel
@@ -1314,11 +1295,10 @@ namespace bmduino {
     }
 
     /**
-     * Preheating completed?
-     * @return Status.ture:complete;false:incomple
+     * Preheating completed? ture:complete, false:incomple
      */
     //% blockId=bmduino_preheatingCompletedOfPIR block="PIR module preheating completed"
-    //% subcategory="PIR module" 
+    //% subcategory="PIR" 
     //% weight=30
     export function preheatingCompletedOfPIR(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
@@ -1329,11 +1309,10 @@ namespace bmduino {
     }
 
     /**
-     * Preheating not completed?
-     * @return Status.ture:incomple;false:complete
+     * Preheating not completed? ture:incomple, false:complete
      */
     //% blockId=bmduino_preheatingNotCompletedOfPIR block="PIR module preheating not completed"
-    //% subcategory="PIR module" 
+    //% subcategory="PIR" 
     //% weight=20
     export function preheatingNotCompletedOfPIR(): boolean {
         if (input.runningTime() < 30000)   //Does the running time exceed 30 seconds
@@ -1344,11 +1323,10 @@ namespace bmduino {
     }
 
     /**
-     * Check if PIR is triggered (someone approaching)?
-     * @return Status.ture:Yes;false:No
+     * Check if PIR is triggered? ture:yes, false:no
      */
     //% blockId=bmduino_statusFromPIR block="PIR is triggered"
-    //% subcategory="PIR module" 
+    //% subcategory="PIR" 
     //% weight=10
     export function statusFromPIR(): boolean {
         if (pins.digitalReadPin(bm22S4221_1_intPin) == 1) {
@@ -1397,22 +1375,21 @@ namespace bmduino {
     }
 
     /**
-     * Initialize module(temperature & humidity module)
+     * Initialize the temperature & humidity module
      */
-    //% blockId=bmduino_initTemperatureAndHumidityModule block="initialize temperature & humidity module"
-    //% subcategory="Temperature & humidity module"
+    //% blockId=bmduino_initTemperatureAndHumidityModule block="initialize temperature & humidity"
+    //% subcategory="Temperature & humidity"
     //% weight=100
     export function initTemperatureAndHumidityModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
     }
 
     /**
-     * Read temperature
-     * @param unit Unit Selection(true:Fahrenheit degree;false:centigrade(default))
-     * @return temperature.unit:℃（default）or ℉
+     * Read temperature, unit:℃ or ℉
+     * @param unit Unit Selection, true:Fahrenheit degree, false:centigrade
      */
-    //% blockId=bmduino_readTemperatureForTH block="read temperature (uint：%unit)" 
-    //% subcategory="Temperature & humidity module"
+    //% blockId=bmduino_readTemperatureForTH block="ambient temperature %unit"
+    //% subcategory="Temperature & humidity"
     //% weight=90
     export function readTemperatureForTH(unit: BMduinoTemperatureUnit): number {
         let temperature = 0;
@@ -1438,11 +1415,10 @@ namespace bmduino {
     }
 
     /**
-     * Read humidity
-     * @return humidity.unit:%RH
+     * Read humidity, unit:%RH
      */
-    //% blockId=bmduino_readHumidityFromTH block="read humidity"
-    //% subcategory="Temperature & humidity module"
+    //% blockId=bmduino_readHumidityFromTH block="ambient humidity"
+    //% subcategory="Temperature & humidity"
     //% weight=80
     export function readHumidityFromTH(): number {
         let humidity = 0;
@@ -1525,10 +1501,10 @@ namespace bmduino {
     }
 
     /**
-     * Initialize module(ambient light module)
+     * initialize ambient light module
      */
-    //% blockId=bmduino_initAmbientLightModule block="initialize ambient light module"
-    //% subcategory="Ambient light module"
+    //% blockId=bmduino_initAmbientLightModule block="initialize ambient light"
+    //% subcategory="Ambient light"
     //% weight=100
     export function initAmbientLightModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
@@ -1537,10 +1513,9 @@ namespace bmduino {
 
     /**
      * Obtain the number of ambient light modules
-     * @return Module Number
      */
-    //% blockId=bmduino_numberOfAmbientLightModule block="obtain the number of ambient light modules"
-    //% subcategory="Ambient light module"
+    //% blockId=bmduino_numberOfAmbientLightModule block="the number of ambient light modules"
+    //% subcategory="Ambient light"
     //% weight=90
     export function numberOfAmbientLightModule(): number {
         let moduleNumber = 0;
@@ -1561,12 +1536,11 @@ namespace bmduino {
     }
 
     /**
-     * Read Lux
+     * Read smbient light value, uint:Lux
      * @param sensorID Module ID
-     * @return Ambient Light value.uint:Lux
      */
-    //% blockId=bmduino_readALS block="read the ambient light value(lux) (ID %sensorID)"
-    //% subcategory="Ambient light module"
+    //% blockId=bmduino_readALS block="the ambient light value, ID = %sensorID"
+    //% subcategory="Ambient light"
     //% weight=80
     //% sensorID.defl=1
     export function readALS(sensorID: number): number {
@@ -1638,10 +1612,10 @@ namespace bmduino {
     }
 
     /**
-     * Initialize module(4-KEY touch module)
+     * Initialize 4-KEY touch module
      */
-    //% blockId=bmduino_init4KeyModule block="initialize 4-KEY touch module"
-    //% subcategory="4-KEY touch module"
+    //% blockId=bmduino_init4KeyModule block="initialize 4-KEY touch"
+    //% subcategory="4-KEY touch"
     //% weight=100
     export function init4KeyModule(): void {
         // MakeCode defaults to handle I2C initialization without the need for additional settings
@@ -1650,10 +1624,9 @@ namespace bmduino {
 
     /**
      * Obtain the number of 4-KEY touch modules
-     * @return Module number
      */
-    //% blockId=bmduino_numberOf4KeyModule block="obtain the number of 4-KEY touch modules"
-    //% subcategory="4-KEY touch module"
+    //% blockId=bmduino_numberOf4KeyModule block="the number of 4-KEY touch modules"
+    //% subcategory="4-KEY touch"
     //% weight=90
     export function numberOf4KeyModule(): number {
         let moduleNumber = 0;
@@ -1674,11 +1647,10 @@ namespace bmduino {
     }
 
     /**
-     * Touch pressed?
-     * @return Status.0-Pressed down;1-Not pressed
+     * Touch pressed? 0-Pressed down;1-Not pressed
      */
     //% blockId=bmduino_pressedFrom4Key block="4-KEY touch pressed?"
-    //% subcategory="4-KEY touch module"
+    //% subcategory="4-KEY touch"
     //% weight=80
     export function pressedFrom4Key(): boolean {
         if (pins.digitalReadPin(bmk52M134_intPin) == 1) {
@@ -1689,10 +1661,9 @@ namespace bmduino {
 
     /**
     * Get key value
-    * @return KeyValue.
     */
-    //% blockId=bmduino_readKeyFrom4Key block="obtain the serial number of 4-KEY touch"
-    //% subcategory="4-KEY touch module"
+    //% blockId=bmduino_readKeyFrom4Key block="the serial number of 4-KEY touch"
+    //% subcategory="4-KEY touch"
     //% weight=70
     export function readKeyFrom4Key(): number {
         let keyValue = 0;
@@ -1723,11 +1694,10 @@ namespace bmduino {
     }
 
     /**
-    * A touch is pressed？
-    * @return Status.0-Pressed down;1-Not pressed
+    * A touch is pressed？ 0-pressed down, 1-not pressed
     */
     //% blockId=bmduino_isPressedFrom4Key block="is touch %key pressed?"
-    //% subcategory="4-KEY touch module"
+    //% subcategory="4-KEY touch"
     //% key.min=1 key.max=16 key.defl=1
     //% weight=60
     export function isPressedFrom4Key(key: number): boolean {
@@ -1804,7 +1774,7 @@ namespace bmduino {
     * Clear the OLED display
     */
     //% blockId=bmduino_clearDisplayOLED block="clear display"
-    //% subcategory="OLED module"
+    //% subcategory="OLED"
     //% weight=10
     export function clearDisplayOLED() {
         loadStarted = false;
@@ -1831,7 +1801,7 @@ namespace bmduino {
     }
 
     /**
-    * Write string (NewLine)
+    * Write string with newLine
     * @param str The string on FontTable
     */
     function writeStringNewLineOLED(str: string) {
@@ -1840,7 +1810,7 @@ namespace bmduino {
     }
 
     /**
-    * Write number (NewLine)
+    * Write number with newLine
     * @param n The Num on FontTable
     */
     function writeNumNewLineOLED(n: number) {
@@ -1850,11 +1820,11 @@ namespace bmduino {
 
 
     /**
-    * Write string (without newLine)
+    * Write string without newLine
     * @param str The string on FontTable
     */
     //% blockId=bmduino_writeStringOLED block="write string $str"
-    //% subcategory="OLED module"
+    //% subcategory="OLED"
     //% weight=70
     export function writeStringOLED(str: string) {
         for (let i = 0; i < str.length; i++) {
@@ -1867,11 +1837,11 @@ namespace bmduino {
     }
 
     /**
-    * Write number (without newLine)
+    * Write number without newLine
     * @param n The Num on FontTable
     */
     //% blockId=bmduino_writeNumOLED block="write number $n"
-    //% subcategory="OLED module"
+    //% subcategory="OLED"
     //% weight=60
     export function writeNumOLED(n: number) {
         let n_tep = Math.floor(n * 100) / 100;  //Keep 2 decimal places
@@ -1883,7 +1853,7 @@ namespace bmduino {
     * NewLine
     */
     //% blockId=bmduino_newLineOLED block="line breaks"
-    //% subcategory="OLED module"
+    //% subcategory="OLED"
     //% weight=50
     export function newLineOLED() {
         charY++;
@@ -1896,10 +1866,10 @@ namespace bmduino {
     * @param placeX Row
     * @param str The string on FontTable
     */
-    //% blockId=bmduino_writeStringPlaceOLED block="line %placeY,character %placeX,write string $str"
+    //% blockId=bmduino_writeStringPlaceOLED block="line %placeY, character %placeX, write string $str"
     //% placeX.defl=1
     //% placeY.min=1 placeY.max=4 placeY.defl=1
-    //% subcategory="OLED module"
+    //% subcategory="OLED"
     //% weight=40
     export function writeStringPlaceOLED(placeY: number, placeX: number, str: string) {
         let charY_place = placeY - 1;                         //Line : charY_place
@@ -1923,8 +1893,8 @@ namespace bmduino {
     * @param placeX Row
     * @param n The Num on FontTable
     */
-    //% blockId=bmduino_writeNumPlaceOLED block="line %placeY,character %placeX,write number $n"
-    //% subcategory="OLED module"
+    //% blockId=bmduino_writeNumPlaceOLED block="line %placeY, character %placeX, write number $n"
+    //% subcategory="OLED"
     //% placeX.defl=1
     //% placeY.min=1 placeY.max=4 placeY.defl=1
     //% weight=30
@@ -1987,14 +1957,14 @@ namespace bmduino {
     }
 
     /**
-    * Initialize module(OLED module)
+    * Initialize OLED module
     * @param width Display width in pixels
     * @param height Display height in pixels
     */
-    //% blockId=bmduino_initOLEDModule block="initialize OLED module,Width $width Height $height"
+    //% blockId=bmduino_initOLEDModule block="initialize OLED module, width $width height $height"
     //% width.defl=128
     //% height.defl=64
-    //% subcategory="OLED module"
+    //% subcategory="OLED"
     //% weight=100
     export function initOLEDModule(width: number, height: number) {
         commandForOLED(SSD1306_DISPLAYOFF);

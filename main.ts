@@ -1146,7 +1146,7 @@ namespace bmduino {
      * Read the white smoke detection value, 12-bit A/D value
      * @param smoke Smoke type, smoke=1: white, smoke=2: black
      */
-    //% blockId=bmduino_readSmokeValue block="%BMduinoSmokeType value"
+    //% blockId=bmduino_readSmokeValue block="%smoke value"
     //% subcategory="Smoke detector"
     //% weight=1
     export function readSmokeValue(smoke: BMduinoSmokeType): number {

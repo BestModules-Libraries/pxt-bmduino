@@ -28,7 +28,7 @@
     "bmduino.preheatingNotCompletedOfCO2|block": "CO2模块预热未完成",
     "bmduino.readCO2|block": "CO2值",
     "bmduino.initSmokeModule|block": "初始化感烟模块 %uart",
-    "bmduino.readSmokeValue|block": "%BMduino_SmokeType 值",
+    "bmduino.readSmokeValue|block": "%smoke 值",
     "bmduino.statusFromSmoke|block": "烟雾报警",
     "bmduino.initPIRModule|block": "初始化 PIR 模块 %uart",
     "bmduino.preheatingCompletedOfPIR|block": "PIR 模块预热完成",
